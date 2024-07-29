@@ -9,7 +9,8 @@ using Core.Entities;
 using Core.Validations;
 using FluentValidation;
 using Prometheus;
-using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,7 +25,6 @@ builder.Services.AddControllers()
 builder.Services.AddFluentValidationAutoValidation()
     .AddFluentValidationClientsideAdapters();
 
-// Configura Swagger/OpenAPI
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -33,9 +33,7 @@ builder.Services.AddSwaggerGen(c =>
     c.IncludeXmlComments(xmlPath);
 });
 
-
 var connectionString = configuration.GetConnectionString("SqlConnection");
-TestDatabaseConnection(connectionString);
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
@@ -48,9 +46,6 @@ builder.Services.AddScoped<IValidator<Contact>, ContactValidator>();
 
 var app = builder.Build();
 
-ApplyDatabaseMigrations(app);
-
-// Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
@@ -58,7 +53,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1"));
 }
 
-// Configure Prometheus metrics
+ApplyMigrationsIfNeeded(app);
+
 var counter = Metrics.CreateCounter("TechChallengeApi", "Counts request to the metrics api endpoint",
     new CounterConfiguration
     {
@@ -75,42 +71,25 @@ app.UseMetricServer();
 app.UseHttpMetrics();
 
 app.UseHttpsRedirection();
-
 app.UseRouting();
-
 app.UseAuthorization();
-
-app.MapControllers();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+});
 
 app.Run();
 
-void TestDatabaseConnection(string connectionString)
+void ApplyMigrationsIfNeeded(IHost app)
 {
-    try
+    using (var scope = app.Services.CreateScope())
     {
-        using (var connection = new SqlConnection(connectionString))
+        var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var dbExists = context.Database.GetService<IDatabaseCreator>() is RelationalDatabaseCreator databaseCreator && databaseCreator.Exists();
+        
+        if (!dbExists)
         {
-            connection.Open();
-            Console.WriteLine("Connection to the database was successful.");
-        }
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Failed to connect to the database: {ex.Message}");
-    }
-}
-
-void ApplyDatabaseMigrations(WebApplication app)
-{
-    var migrationFlagFile = "/app/hasRunMigrations";
-
-    if (!File.Exists(migrationFlagFile))
-    {
-        using (var scope = app.Services.CreateScope())
-        {
-            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-            dbContext.Database.Migrate();
-            File.Create(migrationFlagFile).Dispose();
+            context.Database.Migrate();
         }
     }
 }
