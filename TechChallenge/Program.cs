@@ -70,7 +70,7 @@ app.Use((context, next) =>
 app.UseMetricServer();
 app.UseHttpMetrics();
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseRouting();
 app.UseAuthorization();
 app.UseEndpoints(endpoints =>
@@ -86,7 +86,7 @@ void ApplyMigrationsIfNeeded(IHost app)
     {
         var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var dbExists = context.Database.GetService<IDatabaseCreator>() is RelationalDatabaseCreator databaseCreator && databaseCreator.Exists();
-        
+
         if (!dbExists)
         {
             context.Database.Migrate();
