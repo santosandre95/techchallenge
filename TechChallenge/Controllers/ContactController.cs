@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace TechChallengeApi.Controllers
 {
+    [Route("api/[controller]")]
     [ApiController]
-    [Route("[controller]")]
     public class ContactController : ControllerBase
     {
         private readonly IContactApplication _contactApplication;
@@ -23,7 +23,7 @@ namespace TechChallengeApi.Controllers
         /// <param name="id">Id do contato.</param>
         /// <returns>Um contato.</returns>
         /// <response code="200">Contato retornado com sucesso!</response>
-        /// <response code="404">Contato não encontrado :(</response>
+        /// <response code="404">Contato nï¿½o encontrado :(</response>
         [HttpGet("{id}")]
         public async Task<ActionResult<Contact>> Get(Guid id)
         {
@@ -41,10 +41,10 @@ namespace TechChallengeApi.Controllers
         /// <summary>
         /// Cria um novo contato.
         /// </summary>
-        /// <param name="contact">Informações do contato a ser criado.</param>
+        /// <param name="contact">Informaï¿½ï¿½es do contato a ser criado.</param>
         /// <returns>Contato criado.</returns>
         /// <response code="201">Contato criado com sucesso!</response>
-        /// <response code="400">Conteúdo inválido :(</response>
+        /// <response code="400">Conteï¿½do invï¿½lido :(</response>
         [HttpPost]
         public async Task<ActionResult<Contact>> Add(Contact contact)
         {
@@ -65,8 +65,8 @@ namespace TechChallengeApi.Controllers
         /// <param name="contact">Objeto de contato atualizado.</param>
         /// <returns>Retorna status code.</returns>
         /// <response code="204">Contato atualizado com sucesso!</response>
-        /// <response code="400">Conteúdo inválido T.T</response>
-        /// <response code="404">Contato não encontrado :(</response>
+        /// <response code="400">Conteï¿½do invï¿½lido T.T</response>
+        /// <response code="404">Contato nï¿½o encontrado :(</response>
         [HttpPut]
         public async Task<IActionResult> Update(Contact contact)
         {
@@ -89,9 +89,9 @@ namespace TechChallengeApi.Controllers
         /// Exclui contato por Id.
         /// </summary>
         /// <param name="id">Id do contato.</param>
-        /// <returns>Sem conteúdo.</returns>
-        /// <response code="204">Contato excluído com sucesso!</response>
-        /// <response code="404">Contato não encontrado T.T</response>
+        /// <returns>Sem conteï¿½do.</returns>
+        /// <response code="204">Contato excluï¿½do com sucesso!</response>
+        /// <response code="404">Contato nï¿½o encontrado T.T</response>
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
@@ -121,7 +121,7 @@ namespace TechChallengeApi.Controllers
         /// <summary>
         /// Busca todos os contatos com base em um DDD.
         /// </summary>
-        /// <param name="ddd">DDD da região do telefone.</param>
+        /// <param name="ddd">DDD da regiï¿½o do telefone.</param>
         /// <returns>Retorna uma lista de contatos com o DDD informado.</returns>
         /// <response code="200">Lista de contatos por DDD filtrado com sucesso!</response>
         [HttpGet("Ddd/{ddd}")]

@@ -1,28 +1,36 @@
 version: '3.8'
 
 services:
-  api:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: api
-    environment:
-      - ConnectionStrings__SqlConnection=Server=sqlserver,1433;Database=TechChallenge;User Id=sa;Password=$trongP@ssw0rd!;TrustServerCertificate=True;MultipleActiveResultSets=True
-    ports:
-      - "5080:80"
-    depends_on:
-      - sqlserver
-
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: sqlserver
+    ports:
+      - "8002:1433"
     environment:
       ACCEPT_EULA: "Y"
-      SA_PASSWORD: $trongP@ssw0rd!
-    ports:
-      - "1433:1433"
+      MSSQL_SA_PASSWORD: "tech_Chalenge123!"
+    expose:
+      - 1433
     volumes:
       - sqlserver-data:/var/opt/mssql
+    networks:
+      - techchallenge_techchallenge-network
+
+  api:
+    container_name: api
+    image: ${DOCKER_REGISTRY:-}techchallengeapi
+    ports:
+      - "8001:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__SqlConnection=Server=sqlserver,1433;Database=TechChallenge;User Id=sa;Password=tech_Chalenge123!;TrustServerCertificate=True
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - sqlserver
+    networks:
+      - techchallenge_techchallenge-network
 
   prometheus:
     image: prom/prometheus:latest
@@ -32,6 +40,8 @@ services:
       - prometheus-data:/prometheus
     ports:
       - "9090:9090"
+    networks:
+      - techchallenge_techchallenge-network
 
   grafana:
     image: grafana/grafana:latest
@@ -46,8 +56,14 @@ services:
       - ./grafana/dashboards:/var/lib/grafana/dashboards
     depends_on:
       - prometheus
+    networks:
+      - techchallenge_techchallenge-network
 
 volumes:
   sqlserver-data:
   prometheus-data:
   grafana-data:
+
+networks:
+  techchallenge_techchallenge-network:
+    driver: bridge
