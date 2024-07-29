@@ -1,35 +1,28 @@
 version: '3.8'
 
 services:
-  sqlserver:
-    image: mcr.microsoft.com/mssql/server:2019-latest
-    container_name: sqlserver
-    environment:
-      SA_PASSWORD: "Password123!"
-      ACCEPT_EULA: "Y"
-    ports:
-      - "1433:1433"
-    volumes:
-      - sqlserver-data:/var/opt/mssql
-    networks:
-      - backend
-
   api:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: api
     environment:
-      ASPNETCORE_ENVIRONMENT: Development
-ConnectionStrings__DefaultConnection: "Server=sqlserver;Database=TechChallenge;User Id=sa;Password=Password123!;TrustServerCertificate=True;"
+      - ConnectionStrings__SqlConnection=Server=sqlserver,1433;Database=TechChallenge;User Id=sa;Password=$trongP@ssw0rd!;TrustServerCertificate=True;MultipleActiveResultSets=True
+    ports:
+      - "5080:80"
     depends_on:
       - sqlserver
-      - prometheus
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: $trongP@ssw0rd!
     ports:
-      - "8080:8080"
-    networks:
-      - backend
-      - monitoring
+      - "1433:1433"
+    volumes:
+      - sqlserver-data:/var/opt/mssql
 
   prometheus:
     image: prom/prometheus:latest
@@ -39,8 +32,6 @@ ConnectionStrings__DefaultConnection: "Server=sqlserver;Database=TechChallenge;U
       - prometheus-data:/prometheus
     ports:
       - "9090:9090"
-    networks:
-      - monitoring
 
   grafana:
     image: grafana/grafana:latest
@@ -55,14 +46,8 @@ ConnectionStrings__DefaultConnection: "Server=sqlserver;Database=TechChallenge;U
       - ./grafana/dashboards:/var/lib/grafana/dashboards
     depends_on:
       - prometheus
-    networks:
-      - monitoring
 
 volumes:
   sqlserver-data:
   prometheus-data:
   grafana-data:
-
-networks:
-  backend:
-  monitoring:
