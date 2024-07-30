@@ -21,48 +21,13 @@
   "links": [],
   "panels": [
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "PBFA97CFB590B2093"
-      },
+      "type": "table",
+      "title": "Requisições por Status de Resposta (Diário) - Total de Requisições por Status",
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "palette-classic"
           },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -77,70 +42,227 @@
             ]
           }
         },
-        "overrides": [
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "sortBy": [
           {
-            "matcher": {
-              "id": "byName",
-              "options": "{__name__=\"TechChallengeApi\", endpoint=\"/api/Contact\", instance=\"172.29.160.1:8001\", job=\"api\", method=\"POST\"}"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Requisições POST"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "{__name__=\"TechChallengeApi\", endpoint=\"/favicon.ico\", instance=\"172.29.160.1:8001\", job=\"api\", method=\"GET\"}"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Requisições GET"
-              }
-            ]
+            "desc": true
           }
         ]
       },
+      "targets": [
+        {
+          "expr": "sum by (status)(increase(http_requests_received_total{job=\"api\"}[1d]))",
+          "format": "table",
+          "instant": false,
+          "intervalFactor": 2,
+          "legendFormat": "Status {{status}}",
+          "refId": "A"
+        }
+      ],
       "gridPos": {
         "h": 9,
-        "w": 12,
+        "w": 24,
         "x": 0,
         "y": 0
-      },
-      "id": 1,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Latência por Endpoint",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "showPoints": "auto",
+            "pointSize": 5,
+            "stacking": {
+              "mode": "none"
+            },
+            "spanNulls": false
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
         },
+        "overrides": []
+      },
+      "options": {
         "tooltip": {
           "mode": "single",
           "sort": "none"
+        },
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": []
         }
       },
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
-          },
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "{endpoint=~\"/api/Contact|/favicon\\\\.ico\",instance=\"172.29.160.1:8001\"}",
+          "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{job=\"api\"}[5m])) by (le, endpoint))",
           "format": "time_series",
-          "instant": true,
-          "legendFormat": "__auto",
-          "range": true,
+          "instant": false,
+          "intervalFactor": 2,
+          "legendFormat": "Endpoint {{endpoint}}",
           "refId": "A"
         }
       ],
-      "title": "HTTP Request Duration",
-      "type": "timeseries"
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 9
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Uso de CPU",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "showPoints": "auto",
+            "pointSize": 5,
+            "stacking": {
+              "mode": "none"
+            },
+            "spanNulls": false
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        },
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": []
+        }
+      },
+      "targets": [
+        {
+          "expr": "rate(process_cpu_seconds_total{job=\"api\"}[5m])",
+          "format": "time_series",
+          "instant": false,
+          "intervalFactor": 2,
+          "legendFormat": "CPU",
+          "refId": "A"
+        }
+      ],
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 18
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Uso de Memória",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "showPoints": "auto",
+            "pointSize": 5,
+            "stacking": {
+              "mode": "none"
+            },
+            "spanNulls": false
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        },
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": []
+        }
+      },
+      "targets": [
+        {
+          "expr": "process_private_memory_bytes{job=\"api\"}",
+          "format": "time_series",
+          "instant": false,
+          "intervalFactor": 2,
+          "legendFormat": "Memória",
+          "refId": "A"
+        }
+      ],
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 27
+      }
     }
   ],
   "refresh": "5s",
@@ -155,7 +277,7 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "API Metrics Dashboard",
+  "title": "Dashboard de Métricas da API",
   "uid": "api-metrics-dashboard",
   "version": 3,
   "weekStart": ""
