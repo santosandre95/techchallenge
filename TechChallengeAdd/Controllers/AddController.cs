@@ -30,6 +30,7 @@ namespace TechChallengeAdd.Controllers
         {
              try
             {
+
                 await _contactApplication.AddAsync(contact);
                 return CreatedAtAction(nameof(Guid), new { id = contact.Id }, contact);
             }

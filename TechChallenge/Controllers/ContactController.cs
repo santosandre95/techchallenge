@@ -1,9 +1,12 @@
 
+
 using Application.Applications.Interfaces;
 using Core.Entities;
 using Core.Validations;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+
+using TechChallengeApi.RabbitMqClient;
 
 namespace TechChallengeApi.Controllers
 {
@@ -11,11 +14,14 @@ namespace TechChallengeApi.Controllers
     [ApiController]
     public class ContactController : ControllerBase
     {
-        private readonly IContactApplication _contactApplication;
+       
+       
+        private readonly IRabbitMqClient _rabbitMqClient;
 
-        public ContactController(IContactApplication contactApplication)
+        public ContactController( IRabbitMqClient rabbitMqClient)
         {
-            _contactApplication = contactApplication;
+            
+            _rabbitMqClient = rabbitMqClient;
         }
 
         /// <summary>
@@ -30,8 +36,8 @@ namespace TechChallengeApi.Controllers
         {
             try
             {
-                var contact = await _contactApplication.GetAsync(id);
-                return Ok(contact);
+                //var contact = await _contactApplication.GetAsync(id);
+                return Ok();
             }
             catch (KeyNotFoundException)
             {
@@ -51,8 +57,9 @@ namespace TechChallengeApi.Controllers
         {
             try
             {
-                await _contactApplication.AddAsync(contact);
-                return CreatedAtAction(nameof(Get), new { id = contact.Id }, contact);
+               
+                _rabbitMqClient.AddContato(contact);
+                return Ok(contact);
             }
             catch (ValidationException ex)
             {
@@ -73,7 +80,7 @@ namespace TechChallengeApi.Controllers
         {
             try
             {
-                await _contactApplication.UpdateAsync(contact);
+                //await _contactApplication.UpdateAsync(contact);
                 return NoContent();
             }
             catch (ValidationException ex)
@@ -98,7 +105,7 @@ namespace TechChallengeApi.Controllers
         {
             try
             {
-                await _contactApplication.DeleteAsync(id);
+                //await _contactApplication.DeleteAsync(id);
                 return NoContent();
             }
             catch (KeyNotFoundException)
@@ -115,8 +122,8 @@ namespace TechChallengeApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Contact>>> GetAll()
         {
-            var contacts = await _contactApplication.GetAllAsync();
-            return Ok(contacts);
+            //var contacts = await _contactApplication.GetAllAsync();
+            return Ok();
         }
 
         /// <summary>
@@ -128,8 +135,8 @@ namespace TechChallengeApi.Controllers
         [HttpGet("Ddd/{ddd}")]
         public async Task<ActionResult<IEnumerable<Contact>>> GetContactsByDdd(string ddd)
         {
-            var contacts = await _contactApplication.GetContactsByDddAsync(ddd);
-            return Ok(contacts);
+            //var contacts = await _contactApplication.GetContactsByDddAsync(ddd);
+            return Ok();
         }
     }
 }

@@ -1,4 +1,4 @@
-
+version: '3.8'  
 
 services:
   sqlserver:
@@ -9,13 +9,11 @@ services:
     environment:
       ACCEPT_EULA: "Y"
       MSSQL_SA_PASSWORD: "tech_Chalenge123!"
-    expose:
-      - 1433
     volumes:
       - sqlserver-data:/var/opt/mssql
     networks:
       techchallenge_techchallenge-network:
-         ipv4_address: 192.168.1.1
+        ipv4_address: 192.168.1.1
 
   api:
     container_name: api
@@ -32,7 +30,7 @@ services:
       - sqlserver
     networks:
       techchallenge_techchallenge-network:
-         ipv4_address: 192.168.1.2
+        ipv4_address: 192.168.1.2
 
   add_service:
     container_name: add_service
@@ -44,12 +42,12 @@ services:
       - ConnectionStrings__SqlConnection=Server=sqlserver,1433;Database=TechChallenge;User Id=sa;Password=tech_Chalenge123!;TrustServerCertificate=True
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: ./TechChallengeAdd/Dockerfile
     depends_on:
-      -  api
+      - api
     networks:
       techchallenge_techchallenge-network:
-         ipv4_address: 192.168.1.3
+        ipv4_address: 192.168.1.3
 
   buscaid_service:
     container_name: buscaid_service
@@ -61,13 +59,81 @@ services:
       - ConnectionStrings__SqlConnection=Server=sqlserver,1433;Database=TechChallenge;User Id=sa;Password=tech_Chalenge123!;TrustServerCertificate=True
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: ./TechchallengeBuscaId/Dockerfile
     depends_on:
-      -  add_service
+      - add_service
     networks:
       techchallenge_techchallenge-network:
-         ipv4_address: 192.168.1.4
+        ipv4_address: 192.168.1.4
 
+  buscatodos_service:
+    container_name: buscatodos_service
+    image: ${DOCKER_REGISTRY:-}techchallengebuscatodos
+    ports:
+      - "8005:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__SqlConnection=Server=sqlserver,1433;Database=TechChallenge;User Id=sa;Password=tech_Chalenge123!;TrustServerCertificate=True
+    build:
+      context: .
+      dockerfile: ./TechchallengeBuscaTodos/Dockerfile
+    depends_on:
+      - buscaid_service
+    networks:
+      techchallenge_techchallenge-network:
+        ipv4_address: 192.168.1.5
+
+  update_service:
+    container_name: update_service
+    image: ${DOCKER_REGISTRY:-}techchallengeupbate
+    ports:
+      - "8006:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__SqlConnection=Server=sqlserver,1433;Database=TechChallenge;User Id=sa;Password=tech_Chalenge123!;TrustServerCertificate=True
+    build:
+      context: .
+      dockerfile: ./techchallengeUpdate/Dockerfile
+    depends_on:
+      - buscaid_service
+    networks:
+      techchallenge_techchallenge-network:
+        ipv4_address: 192.168.1.6
+
+  delete_service:
+    container_name: delete_service
+    image: ${DOCKER_REGISTRY:-}techchallengedelete
+    ports:
+      - "8004:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__SqlConnection=Server=sqlserver,1433;Database=TechChallenge;User Id=sa;Password=tech_Chalenge123!;TrustServerCertificate=True
+    build:
+      context: .
+      dockerfile: ./techchallengeDelete/Dockerfile
+    depends_on:
+      - update_service
+    networks:
+      techchallenge_techchallenge-network:
+        ipv4_address: 192.168.1.8
+
+
+  buscaddd_service:
+    container_name: buscaddd_service
+    image: ${DOCKER_REGISTRY:-}techchallengedelete
+    ports:
+      - "8004:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__SqlConnection=Server=sqlserver,1433;Database=TechChallenge;User Id=sa;Password=tech_Chalenge123!;TrustServerCertificate=True
+    build:
+      context: .
+      dockerfile: ./techchallengeBuscaDdd/Dockerfile
+    depends_on:
+      - update_service
+    networks:
+      techchallenge_techchallenge-network:
+        ipv4_address: 192.168.1.8    
 
   prometheus:
     image: prom/prometheus:latest
@@ -76,12 +142,12 @@ services:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus-data:/prometheus
     depends_on:
-      - api
+      - buscaddd_service
     ports:
       - "9090:9090"
     networks:
       techchallenge_techchallenge-network:
-         ipv4_address: 192.168.1.5
+        ipv4_address: 192.168.1.9
 
   grafana:
     image: grafana/grafana:latest
@@ -98,7 +164,7 @@ services:
       - prometheus
     networks:
       techchallenge_techchallenge-network:
-         ipv4_address: 192.168.1.6
+        ipv4_address: 192.168.1.10
 
   rabbitmq:
     image: masstransit/rabbitmq:latest
@@ -110,13 +176,17 @@ services:
       - prometheus
     networks:
       techchallenge_techchallenge-network:
-         ipv4_address: 192.168.1.7
+        ipv4_address: 192.168.1.11
 
 volumes:
   sqlserver-data:
   api:
   add_service:
   buscaid_service:
+  buscatodos_service:
+  update_service:
+  delete_service:
+  buscaddd_service:
   prometheus-data:
   grafana-data:
   rabbitmq:

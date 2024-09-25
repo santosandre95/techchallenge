@@ -12,6 +12,8 @@ using Prometheus;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 
+using TechChallengeApi.RabbitMqClient;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,6 +47,11 @@ builder.Services.AddSwaggerGen(c =>
 //builder.Services.AddScoped<IContactApplication, ContactApplication>();
 //builder.Services.AddScoped<IValidator<Contact>, ContactValidator>();
 
+
+
+
+
+builder.Services.AddSingleton<IRabbitMqClient, RabtiMqClient>();
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())

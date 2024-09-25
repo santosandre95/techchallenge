@@ -17,3 +17,26 @@ scrape_configs:
     metrics_path: /metrics
     static_configs:
       - targets: ['buscaid_service:80']
+
+  - job_name: 'buscatodos_service'
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['buscatodos_service:80']
+  
+  - job_name: 'update_service'
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['update_service:80']
+
+  - job_name: 'delete_service'
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['delete_service:80']
+
+  - job_name: 'buscaddd_service'
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['buscaddd_service:80']
+  
+
+
