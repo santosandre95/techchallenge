@@ -12,6 +12,7 @@ using Prometheus;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 var configuration = builder.Configuration;
@@ -33,16 +34,16 @@ builder.Services.AddSwaggerGen(c =>
     c.IncludeXmlComments(xmlPath);
 });
 
-var connectionString = configuration.GetConnectionString("SqlConnection");
+//var connectionString = configuration.GetConnectionString("SqlConnection");
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-{
-    options.UseSqlServer(connectionString);
-}, ServiceLifetime.Scoped);
+//builder.Services.AddDbContext<ApplicationDbContext>(options =>
+//{
+//    options.UseSqlServer(connectionString);
+//}, ServiceLifetime.Scoped);
 
-builder.Services.AddScoped<IContactRepository, ContactRepository>();
-builder.Services.AddScoped<IContactApplication, ContactApplication>();
-builder.Services.AddScoped<IValidator<Contact>, ContactValidator>();
+//builder.Services.AddScoped<IContactRepository, ContactRepository>();
+//builder.Services.AddScoped<IContactApplication, ContactApplication>();
+//builder.Services.AddScoped<IValidator<Contact>, ContactValidator>();
 
 var app = builder.Build();
 
@@ -53,7 +54,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1"));
 }
 
-ApplyMigrationsIfNeeded(app);
+//ApplyMigrationsIfNeeded(app);
 
 var counter = Metrics.CreateCounter("TechChallengeApi", "Counts request to the metrics api endpoint",
     new CounterConfiguration
@@ -67,10 +68,13 @@ app.Use((context, next) =>
     return next();
 });
 
+
+
+
+
 app.UseMetricServer();
 app.UseHttpMetrics();
-
-//app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 app.UseRouting();
 app.UseAuthorization();
 app.MapControllers();

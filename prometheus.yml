@@ -7,3 +7,13 @@ scrape_configs:
     metrics_path: /metrics
     static_configs:
       - targets: ['api:80']
+
+  - job_name: 'add_service'
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['add_service:80']
+
+  - job_name: 'buscaid_service'
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['buscaid_service:80']
