@@ -1,5 +1,3 @@
-name: techchallenge-ci
-
 on:
   push:
     branches:
@@ -21,11 +19,29 @@ jobs:
       with:
         dotnet-version: '8.0.x'
 
-    - name: Restore
-      run: dotnet restore TechChallenge/TechChallengeApi.csproj
+    - name: Restore Projects
+      run: |
+        dotnet restore TechChallenge/TechChallengeApi.csproj
+        dotnet restore TechChallengeAdd/TechChallengeAdd.csproj
+        dotnet restore TechChallengeBuscaDdd/TechChallengeBuscaDdd.csproj
+        dotnet restore TechChallengeBuscaId/TechChallengeBuscaId.csproj
+        dotnet restore TechChallengeBuscaTodos/TechChallengeBuscaTodos.csproj
+        dotnet restore TechChallengeUpdate/TechChallengeUpdate.csproj
+        dotnet restore TechChallengeDelete/TechChallengeDelete.csproj
 
-    - name: Build
-      run: dotnet build TechChallenge/TechChallengeApi.csproj --configuration Release --no-restore
+        
 
-    - name: Test
-      run: dotnet test TechChallengeTest/TechChallengeTest.csproj --configuration Release
+    - name: Build Projects
+      run: |
+        dotnet restore TechChallenge/TechChallengeApi.csproj
+        dotnet restore TechChallengeAdd/TechChallengeAdd.csproj
+        dotnet restore TechChallengeBuscaDdd/TechChallengeBuscaDdd.csproj
+        dotnet restore TechChallengeBuscaId/TechChallengeBuscaId.csproj
+        dotnet restore TechChallengeBuscaTodos/TechChallengeBuscaTodos.csproj
+        dotnet restore TechChallengeUpdate/TechChallengeUpdate.csproj
+        dotnet restore TechChallengeDelete/TechChallengeDelete.csproj
+        
+    - name: Test Projects
+      run: |
+        dotnet test TechChallengeTest/TechChallengeTest.csproj --configuration Release
+   
