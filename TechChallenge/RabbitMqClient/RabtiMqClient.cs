@@ -40,5 +40,74 @@ namespace TechChallengeApi.RabbitMqClient
                 body: body
                 );
         }
+
+        public void AtualizaContato(Contact contact)
+        {
+            var mensagem = JsonSerializer.Serialize(contact);
+            var body = Encoding.UTF8.GetBytes(mensagem);
+            _channel.BasicPublish
+                (
+
+                exchange: "trigger",
+                routingKey: "Add_fila",
+                basicProperties: null,
+                body: body
+                );
+        }
+
+        public void BuscaPoID(Guid id)
+        {
+            var mensagem = JsonSerializer.Serialize(id);
+            var body = Encoding.UTF8.GetBytes(mensagem);
+            _channel.BasicPublish
+                (
+
+                exchange: "trigger",
+                routingKey: "buscaId_fila",
+                basicProperties: null,
+                body: body
+                );
+        }
+
+        public void BuscaPorDdd(string ddd)
+        {
+            var mensagem = JsonSerializer.Serialize(ddd);
+            var body = Encoding.UTF8.GetBytes(mensagem);
+            _channel.BasicPublish
+                (
+
+                exchange: "trigger",
+                routingKey: "buscaTodos_fila",
+                basicProperties: null,
+                body: body
+                );
+        }
+
+        public void Buscatodos()
+        {
+           
+            _channel.BasicPublish
+                (
+
+                exchange: "trigger",
+                routingKey: "buscaTodos_fila",
+                basicProperties: null
+   
+                );
+        }
+
+        public void RemoveContato(Guid id)
+        {
+            var mensagem = JsonSerializer.Serialize(id);
+            var body = Encoding.UTF8.GetBytes(mensagem);
+            _channel.BasicPublish
+                (
+
+                exchange: "trigger",
+                routingKey: "Delete_fila",
+                basicProperties: null,
+                body: body
+                );
+        }
     }
 }

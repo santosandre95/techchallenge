@@ -10,11 +10,19 @@ namespace Application.Applications
     {
         protected readonly IContactRepository _contactRepository;
         protected readonly IValidator<Contact> _contactValidator;
+        private IContactRepository object1;
+        private IValidator<Contact> object2;
 
-        public ContactApplication(IContactRepository contactRepository, IValidator<Contact> contactValidator)
+        public ContactApplication(IContactRepository contactRepository, IValidator<Contact> contactValidator, global::MassTransit.IBus @object)
         {
             _contactRepository = contactRepository;
             _contactValidator = contactValidator;
+        }
+
+        public ContactApplication(IContactRepository object1, IValidator<Contact> object2)
+        {
+            this.object1 = object1;
+            this.object2 = object2;
         }
 
         public async Task<Contact?> GetAsync(Guid id)

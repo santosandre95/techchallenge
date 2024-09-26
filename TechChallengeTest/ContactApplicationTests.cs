@@ -4,121 +4,125 @@ using FluentValidation;
 using FluentValidation.Results;
 using Infrastructure.Repositories.Interface;
 using Application.Applications;
+using Microsoft.AspNetCore.Mvc;
+using TechChallengeApi.Controllers;
+using TechChallengeApi.RabbitMqClient;
 
 public class ContactApplicationTests
 {
-    private readonly Mock<IContactRepository> _mockContactRepository;
-    private readonly Mock<IValidator<Contact>> _mockContactValidator;
-    private readonly ContactApplication _contactApplication;
+    private readonly Mock<IRabbitMqClient> _mockRabbitMqClient;
+    private readonly ContactController _controller;
+    private readonly Contact contact;
 
     public ContactApplicationTests()
     {
-        _mockContactRepository = new Mock<IContactRepository>();
-        _mockContactValidator = new Mock<IValidator<Contact>>();
-        _contactApplication = new ContactApplication(_mockContactRepository.Object, _mockContactValidator.Object);
+        _mockRabbitMqClient = new Mock<IRabbitMqClient>();
+        _controller = new ContactController(_mockRabbitMqClient.Object);
     }
 
     [Fact]
-    public async Task GetAsync_ShouldThrowKeyNotFoundException_WhenContactDoesNotExist()
+    public async Task Get_ShouldReturnOk_WhenContactExists()
     {
         var contactId = Guid.NewGuid();
-        _mockContactRepository.Setup(repo => repo.CheckIfExistsAsync(contactId)).ReturnsAsync(false);
-        await Assert.ThrowsAsync<KeyNotFoundException>(() => _contactApplication.GetAsync(contactId));
+        _mockRabbitMqClient.Setup(client => client.BuscaPoID(contactId));
+
+        var result = await _controller.Get(contactId);
+
+        var actionResult = Assert.IsType<ActionResult<Contact>>(result);
+        Assert.IsType<OkResult>(actionResult.Result);
     }
 
     [Fact]
-    public async Task GetAsync_ShouldReturnContact_WhenContactExists()
+    public async Task Get_ShouldReturnNotFound_WhenContactDoesNotExist()
     {
         var contactId = Guid.NewGuid();
-        var contact = new Contact { Id = contactId, Name = "Test", Email = "test@example.com", Phone = "12345678", Ddd = "11" };
-        _mockContactRepository.Setup(repo => repo.CheckIfExistsAsync(contactId)).ReturnsAsync(true);
-        _mockContactRepository.Setup(repo => repo.GetAsync(contactId)).ReturnsAsync(contact);
-        var result = await _contactApplication.GetAsync(contactId);
-        Assert.Equal(contact, result);
-    }
+        _mockRabbitMqClient.Setup(client => client.BuscaPoID(contactId)).Throws(new KeyNotFoundException());
 
-    [Theory]
-    [InlineData("", "invalid-email", "123", "")]
-    [InlineData("Valid Name", "invalid-email", "123", "11")]
-    [InlineData("Valid Name", "valid@example.com", "123", "")]
-    public async Task AddAsync_ShouldThrowValidationException_WhenContactIsInvalid(string name, string email, string phone, string ddd)
-    {
-        var contact = new Contact { Name = name, Email = email, Phone = phone, Ddd = ddd };
-        var validationResult = new ValidationResult(new List<ValidationFailure> 
-        { 
-            new ValidationFailure("Name", "Name is required"),
-            new ValidationFailure("Email", "Email is invalid"),
-            new ValidationFailure("Phone", "Phone is invalid"),
-            new ValidationFailure("Ddd", "Ddd is invalid")
-        });
-        _mockContactValidator.Setup(validator => validator.ValidateAsync(contact, default)).ReturnsAsync(validationResult);
-        await Assert.ThrowsAsync<ValidationException>(() => _contactApplication.AddAsync(contact));
+        var result = await _controller.Get(contactId);
+
+        var actionResult = Assert.IsType<ActionResult<Contact>>(result);
+        Assert.IsType<NotFoundResult>(actionResult.Result);
     }
 
     [Fact]
-    public async Task AddAsync_ShouldAddContact_WhenContactIsValid()
+    public async Task Add_ShouldReturnOk_WhenContactIsValid()
     {
-        var contact = new Contact { Name = "Valid Name", Email = "valid@example.com", Phone = "12345678", Ddd = "11" };
-        var validationResult = new ValidationResult();
-        _mockContactValidator.Setup(validator => validator.ValidateAsync(contact, default)).ReturnsAsync(validationResult);
-        await _contactApplication.AddAsync(contact);
-        _mockContactRepository.Verify(repo => repo.AddAsync(contact), Times.Once);
+        var contact = new Contact { Name = "Test", Email = "test@example.com", Phone = "12345678", Ddd = "11" };
+        _mockRabbitMqClient.Setup(client => client.AddContato(contact));
+          
+
+        var result = await _controller.Add(contact);
+
+        var actionResult = Assert.IsType<ActionResult<Contact>>(result);
+        var okResult = Assert.IsType<OkObjectResult>(actionResult.Result);
+        Assert.Equal(contact, okResult.Value);
+        
     }
 
-    [Theory]
-    [InlineData("", "invalid-email", "123", "")]
-    [InlineData("Valid Name", "invalid-email", "123", "11")]
-    [InlineData("Valid Name", "valid@example.com", "123", "")]
-    public async Task UpdateAsync_ShouldThrowValidationException_WhenContactIsInvalid(string name, string email, string phone, string ddd)
+
+
+    [Fact]
+    public async Task Update_ShouldReturnNoContent_WhenContactIsUpdated()
     {
-        var contact = new Contact { Id = Guid.NewGuid(), Name = name, Email = email, Phone = phone, Ddd = ddd };
-        var validationResult = new ValidationResult(new List<ValidationFailure> 
-        { 
-            new ValidationFailure("Name", "Name is required"),
-            new ValidationFailure("Email", "Email is invalid"),
-            new ValidationFailure("Phone", "Phone is invalid"),
-            new ValidationFailure("Ddd", "Ddd is invalid")
-        });
-        _mockContactValidator.Setup(validator => validator.ValidateAsync(contact, default)).ReturnsAsync(validationResult);
-        await Assert.ThrowsAsync<ValidationException>(() => _contactApplication.UpdateAsync(contact));
+        var contact = new Contact { Id = Guid.NewGuid(), Name = "Updated", Email = "updated@example.com", Phone = "87654321", Ddd = "22" };
+        _mockRabbitMqClient.Setup(client => client.AtualizaContato(contact));
+
+        var result = await _controller.Update(contact);
+
+        Assert.IsType<NoContentResult>(result);
     }
 
     [Fact]
-    public async Task UpdateAsync_ShouldThrowKeyNotFoundException_WhenContactDoesNotExist()
+    public async Task Update_ShouldReturnNotFound_WhenContactDoesNotExist()
     {
-        var contact = new Contact { Id = Guid.NewGuid(), Name = "Valid Name", Email = "valid@example.com", Phone = "12345678", Ddd = "11" };
-        var validationResult = new ValidationResult();
-        _mockContactValidator.Setup(validator => validator.ValidateAsync(contact, default)).ReturnsAsync(validationResult);
-        _mockContactRepository.Setup(repo => repo.CheckIfExistsAsync(contact.Id)).ReturnsAsync(false);
-        await Assert.ThrowsAsync<KeyNotFoundException>(() => _contactApplication.UpdateAsync(contact));
+        var contact = new Contact { Id = Guid.NewGuid(), Name = "Nonexistent" , Email = "updated@example.com", Phone = "87654321", Ddd = "22" };
+        _mockRabbitMqClient.Setup(client => client.AtualizaContato(contact)).Throws(new KeyNotFoundException());
+
+        var result = await _controller.Update(contact);
+
+        Assert.IsType<NotFoundResult>(result);
     }
 
     [Fact]
-    public async Task UpdateAsync_ShouldUpdateContact_WhenContactIsValidAndExists()
-    {
-        var contact = new Contact { Id = Guid.NewGuid(), Name = "Valid Name", Email = "valid@example.com", Phone = "12345678", Ddd = "11" };
-        var validationResult = new ValidationResult();
-        _mockContactValidator.Setup(validator => validator.ValidateAsync(contact, default)).ReturnsAsync(validationResult);
-        _mockContactRepository.Setup(repo => repo.CheckIfExistsAsync(contact.Id)).ReturnsAsync(true);
-        await _contactApplication.UpdateAsync(contact);
-        _mockContactRepository.Verify(repo => repo.UpdateAsync(contact), Times.Once);
-    }
-
-    [Fact]
-    public async Task DeleteAsync_ShouldThrowKeyNotFoundException_WhenContactDoesNotExist()
+    public async Task Delete_ShouldReturnNoContent_WhenContactIsDeleted()
     {
         var contactId = Guid.NewGuid();
-        _mockContactRepository.Setup(repo => repo.GetAsync(contactId)).ReturnsAsync((Contact)null);
-        await Assert.ThrowsAsync<KeyNotFoundException>(() => _contactApplication.DeleteAsync(contactId));
+        _mockRabbitMqClient.Setup(client => client.RemoveContato(contactId));
+
+        var result = await _controller.Delete(contactId);
+
+        Assert.IsType<NoContentResult>(result);
     }
 
     [Fact]
-    public async Task DeleteAsync_ShouldDeleteContact_WhenContactExists()
+    public async Task Delete_ShouldReturnNotFound_WhenContactDoesNotExist()
     {
         var contactId = Guid.NewGuid();
-        var contact = new Contact { Id = contactId, Name = "Test", Email = "test@example.com", Phone = "12345678", Ddd = "11" };
-        _mockContactRepository.Setup(repo => repo.GetAsync(contactId)).ReturnsAsync(contact);
-        await _contactApplication.DeleteAsync(contactId);
-        _mockContactRepository.Verify(repo => repo.DeleteAsync(contact), Times.Once);
+        _mockRabbitMqClient.Setup(client => client.RemoveContato(contactId)).Throws(new KeyNotFoundException());
+
+        var result = await _controller.Delete(contactId);
+
+        Assert.IsType<NotFoundResult>(result);
+    }
+
+    [Fact]
+    public async Task GetAll_ShouldReturnOk_WhenContactsAreFetched()
+    {
+        _mockRabbitMqClient.Setup(client => client.Buscatodos());
+
+        var result = await _controller.GetAll();
+
+        Assert.IsType<OkResult>(result.Result);
+    }
+
+    [Fact]
+    public async Task GetContactsByDdd_ShouldReturnOk_WhenContactsAreFetchedByDdd()
+    {
+        var ddd = "11";
+        _mockRabbitMqClient.Setup(client => client.BuscaPorDdd(ddd));
+
+        var result = await _controller.GetContactsByDdd(ddd);
+
+        Assert.IsType<OkResult>(result.Result);
     }
 }

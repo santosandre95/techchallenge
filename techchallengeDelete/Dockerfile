@@ -5,22 +5,20 @@ WORKDIR /app
 EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-WORKDIR /srcIGURATION=Release
 WORKDIR /src
 
-COPY ["techchallengeDelete/techchallengeDelete.csproj", "techchallengeDelete/"]
-RUN dotnet restore "./techchallengeDelete/techchallengeDelete.csproj"
+COPY ["TechChallengeDelete/TechChallengeDelete.csproj", "TechChallengeDelete/"]
+RUN dotnet restore "./TechChallengeDelete/TechChallengeDelete.csproj"
 COPY . .
-WORKDIR "/src/techchallengeDelete"
-RUN dotnet build "./techchallengeDelete.csproj" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR "/src/TechChallengeDelete"
+RUN dotnet build "./TechChallengeDelete.csproj" -c Release -o /app/build
 
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./techchallengeDelete.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
-
+RUN dotnet publish "./TechChallengeDelete.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "techchallengeDelete.dll"]
+ENTRYPOINT ["dotnet", "TechChallengeDelete.dll"]

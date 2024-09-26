@@ -17,11 +17,17 @@ namespace TechChallengeApi.Controllers
        
        
         private readonly IRabbitMqClient _rabbitMqClient;
+        private IContactApplication @object;
 
         public ContactController( IRabbitMqClient rabbitMqClient)
         {
             
             _rabbitMqClient = rabbitMqClient;
+        }
+
+        public ContactController(IContactApplication @object)
+        {
+            this.@object = @object;
         }
 
         /// <summary>
@@ -36,7 +42,7 @@ namespace TechChallengeApi.Controllers
         {
             try
             {
-                //var contact = await _contactApplication.GetAsync(id);
+                _rabbitMqClient.BuscaPoID(id);
                 return Ok();
             }
             catch (KeyNotFoundException)
@@ -80,7 +86,7 @@ namespace TechChallengeApi.Controllers
         {
             try
             {
-                //await _contactApplication.UpdateAsync(contact);
+                _rabbitMqClient.AtualizaContato(contact);
                 return NoContent();
             }
             catch (ValidationException ex)
@@ -105,7 +111,7 @@ namespace TechChallengeApi.Controllers
         {
             try
             {
-                //await _contactApplication.DeleteAsync(id);
+                _rabbitMqClient.RemoveContato(id);
                 return NoContent();
             }
             catch (KeyNotFoundException)
@@ -122,7 +128,7 @@ namespace TechChallengeApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Contact>>> GetAll()
         {
-            //var contacts = await _contactApplication.GetAllAsync();
+            _rabbitMqClient.Buscatodos();
             return Ok();
         }
 
@@ -135,7 +141,7 @@ namespace TechChallengeApi.Controllers
         [HttpGet("Ddd/{ddd}")]
         public async Task<ActionResult<IEnumerable<Contact>>> GetContactsByDdd(string ddd)
         {
-            //var contacts = await _contactApplication.GetContactsByDddAsync(ddd);
+            _rabbitMqClient.BuscaPorDdd(ddd);
             return Ok();
         }
     }

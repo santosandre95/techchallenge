@@ -3,22 +3,21 @@ using Application.Applications;
 using Core.Entities;
 using Core.Validations;
 using FluentValidation;
-using Infrastructure.Repositories.Interface;
+using FluentValidation.AspNetCore;
 using Infrastructure.Repositories;
+using Infrastructure.Repositories.Interface;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
+using System.Reflection;
+using Microsoft.Identity.Client;
 using Prometheus;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
 var configuration = builder.Configuration;
-
-
 
 var connectionString = configuration.GetConnectionString("SqlConnection");
 
@@ -30,6 +29,11 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddScoped<IContactRepository, ContactRepository>();
 builder.Services.AddScoped<IContactApplication, ContactApplication>();
 builder.Services.AddScoped<IValidator<Contact>, ContactValidator>();
+
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 
 
 var app = builder.Build();
@@ -59,7 +63,9 @@ app.Use((context, next) =>
 app.UseMetricServer();
 app.UseHttpMetrics();
 
+
 ApplyMigrationsIfNeeded(app);
+
 
 app.UseHttpsRedirection();
 
@@ -68,7 +74,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
-
 
 
 void ApplyMigrationsIfNeeded(IHost app)

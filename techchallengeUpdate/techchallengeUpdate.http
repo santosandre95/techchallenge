@@ -1,6 +1,6 @@
-@techchallengeUpdate_HostAddress = http://localhost:5220
+@TechChallengeUpdate_HostAddress = http://localhost:5199
 
-GET {{techchallengeUpdate_HostAddress}}/weatherforecast/
+GET {{TechChallengeUpdate_HostAddress}}/weatherforecast/
 Accept: application/json
 
 ###

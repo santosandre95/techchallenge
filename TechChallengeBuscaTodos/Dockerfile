@@ -4,7 +4,6 @@ ENV ASPNETCORE_ENVIRONMENT=Development
 WORKDIR /app
 EXPOSE 80
 
-
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
@@ -12,12 +11,12 @@ COPY ["TechChallengeBuscaTodos/TechChallengeBuscaTodos.csproj", "TechChallengeBu
 RUN dotnet restore "./TechChallengeBuscaTodos/TechChallengeBuscaTodos.csproj"
 COPY . .
 WORKDIR "/src/TechChallengeBuscaTodos"
-RUN dotnet build "./TechChallengeBuscaTodos.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "./TechChallengeBuscaTodos.csproj" -c Release -o /app/build
 
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./TechChallengeBuscaTodos.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./TechChallengeBuscaTodos.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 
 FROM base AS final
