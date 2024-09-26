@@ -118,8 +118,8 @@ services:
         ipv4_address: 192.168.1.8
 
 
-  delete_service:
-    container_name: buscaddd_service
+  buscadd_service:
+    container_name: buscadd_service
     image: ${DOCKER_REGISTRY:-}techchallengeddd
     ports:
       - "8004:80"
@@ -130,7 +130,7 @@ services:
       context: .
       dockerfile: ./techchallengeBuscaDdd/Dockerfile
     depends_on:
-      - update_service
+      - delete_service
     networks:
       techchallenge_techchallenge-network:
         ipv4_address: 192.168.1.8    
@@ -142,7 +142,7 @@ services:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus-data:/prometheus
     depends_on:
-      - buscaddd_service
+      - buscadd_service
     ports:
       - "9090:9090"
     networks:
