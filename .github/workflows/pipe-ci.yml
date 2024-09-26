@@ -22,22 +22,12 @@ jobs:
     - name: Restore Projects
       run: |
         dotnet restore TechChallenge/TechChallengeApi.csproj
-        dotnet restore TechChallengeAdd/TechChallengeAdd.csproj
-        dotnet restore TechChallengeBuscaDdd/TechChallengeBuscaDdd.csproj
-        dotnet restore TechChallengeBuscaId/TechChallengeBuscaId.csproj
-        dotnet restore TechChallengeBuscaTodos/TechChallengeBuscaTodos.csproj
-        dotnet restore TechChallengeUpdate/TechChallengeUpdate.csproj
-        dotnet restore TechChallengeDelete/TechChallengeDelete.csproj
+  
 
     - name: Build Projects
       run: |
         dotnet build TechChallenge/TechChallengeApi.csproj --configuration Release
-        dotnet build TechChallengeAdd/TechChallengeAdd.csproj --configuration Release
-        dotnet build TechChallengeBuscaDdd/TechChallengeBuscaDdd.csproj --configuration Release
-        dotnet build TechChallengeBuscaId/TechChallengeBuscaId.csproj --configuration Release
-        dotnet build TechChallengeBuscaTodos/TechChallengeBuscaTodos.csproj --configuration Release
-        dotnet build TechChallengeUpdate/TechChallengeUpdate.csproj --configuration Release
-        dotnet build TechChallengeDelete/TechChallengeDelete.csproj --configuration Release
+       
 
     - name: Test Projects
       run: |
