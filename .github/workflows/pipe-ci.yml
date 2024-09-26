@@ -1,3 +1,5 @@
+name: techchallenge-ci
+
 on:
   push:
     branches:
@@ -19,16 +21,11 @@ jobs:
       with:
         dotnet-version: '8.0.x'
 
-    - name: Restore Projects
-      run: |
-        dotnet restore TechChallenge/TechChallengeApi.csproj
-  
+    - name: Restore
+      run: dotnet restore TechChallenge/TechChallengeApi.csproj
 
-    - name: Build Projects
-      run: |
-        dotnet build TechChallenge/TechChallengeApi.csproj --configuration Release
-       
+    - name: Build
+      run: dotnet build TechChallenge/TechChallengeApi.csproj --configuration Release --no-restore
 
-    - name: Test Projects
-      run: |
-        dotnet test TechChallengeTest/TechChallengeTest.csproj --configuration Release
+    - name: Test
+      run: dotnet test TechChallengeTest/TechChallengeTest.csproj --configuration Release
