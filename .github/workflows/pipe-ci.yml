@@ -44,4 +44,3 @@ jobs:
     - name: Test Projects
       run: |
         dotnet test TechChallengeTest/TechChallengeTest.csproj --configuration Release
-   
