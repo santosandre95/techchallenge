@@ -2,7 +2,7 @@
 
 using Application.Applications.Interfaces;
 using Core.Entities;
-using Core.Validations;
+
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,21 +14,19 @@ namespace TechChallengeApi.Controllers
     [ApiController]
     public class ContactController : ControllerBase
     {
-       
-       
+
+
         private readonly IRabbitMqClient _rabbitMqClient;
-        private IContactApplication @object;
+        private  readonly IContactApplication _contact;
 
-        public ContactController( IRabbitMqClient rabbitMqClient)
+        public ContactController(IRabbitMqClient rabbitMqClient, IContactApplication contact)
         {
-            
+
             _rabbitMqClient = rabbitMqClient;
+            _contact = contact;
         }
 
-        public ContactController(IContactApplication @object)
-        {
-            this.@object = @object;
-        }
+    
 
         /// <summary>
         /// Busca contato por Id.
@@ -36,7 +34,7 @@ namespace TechChallengeApi.Controllers
         /// <param name="id">Id do contato.</param>
         /// <returns>Um contato.</returns>
         /// <response code="200">Contato retornado com sucesso!</response>
-        /// <response code="404">Contato n�o encontrado :(</response>
+        /// <response code="404">Contato não encontrado :(</response>
         [HttpGet("{id}")]
         public async Task<ActionResult<Contact>> Get(Guid id)
         {
@@ -57,13 +55,13 @@ namespace TechChallengeApi.Controllers
         /// <param name="contact">Informa��es do contato a ser criado.</param>
         /// <returns>Contato criado.</returns>
         /// <response code="201">Contato criado com sucesso!</response>
-        /// <response code="400">Conte�do inv�lido :(</response>
+        /// <response code="400">Conte�do inválido :(</response>
         [HttpPost]
         public async Task<ActionResult<Contact>> Add(Contact contact)
         {
             try
             {
-               
+
                 _rabbitMqClient.AddContato(contact);
                 return Ok(contact);
             }
@@ -80,7 +78,7 @@ namespace TechChallengeApi.Controllers
         /// <returns>Retorna status code.</returns>
         /// <response code="204">Contato atualizado com sucesso!</response>
         /// <response code="400">Conte�do inv�lido T.T</response>
-        /// <response code="404">Contato n�o encontrado :(</response>
+        /// <response code="404">Contato não encontrado :(</response>
         [HttpPut]
         public async Task<IActionResult> Update(Contact contact)
         {
@@ -104,8 +102,8 @@ namespace TechChallengeApi.Controllers
         /// </summary>
         /// <param name="id">Id do contato.</param>
         /// <returns>Sem conte�do.</returns>
-        /// <response code="204">Contato exclu�do com sucesso!</response>
-        /// <response code="404">Contato n�o encontrado T.T</response>
+        /// <response code="204">Contato excluído com sucesso!</response>
+        /// <response code="404">Contato nãoo encontrado T.T</response>
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
@@ -135,7 +133,7 @@ namespace TechChallengeApi.Controllers
         /// <summary>
         /// Busca todos os contatos com base em um DDD.
         /// </summary>
-        /// <param name="ddd">DDD da regi�o do telefone.</param>
+        /// <param name="ddd">DDD da regiãoo do telefone.</param>
         /// <returns>Retorna uma lista de contatos com o DDD informado.</returns>
         /// <response code="200">Lista de contatos por DDD filtrado com sucesso!</response>
         [HttpGet("Ddd/{ddd}")]

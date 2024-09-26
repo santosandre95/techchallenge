@@ -1,13 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Infrastructure.Repositories;
-using Infrastructure.Repositories.Interface;
-using Application.Applications.Interfaces;
-using Application.Applications;
 using FluentValidation.AspNetCore;
 using System.Reflection;
-using Core.Entities;
-using Core.Validations;
-using FluentValidation;
 using Prometheus;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -36,20 +30,6 @@ builder.Services.AddSwaggerGen(c =>
     c.IncludeXmlComments(xmlPath);
 });
 
-//var connectionString = configuration.GetConnectionString("SqlConnection");
-
-//builder.Services.AddDbContext<ApplicationDbContext>(options =>
-//{
-//    options.UseSqlServer(connectionString);
-//}, ServiceLifetime.Scoped);
-
-//builder.Services.AddScoped<IContactRepository, ContactRepository>();
-//builder.Services.AddScoped<IContactApplication, ContactApplication>();
-//builder.Services.AddScoped<IValidator<Contact>, ContactValidator>();
-
-
-
-
 
 builder.Services.AddSingleton<IRabbitMqClient, RabtiMqClient>();
 var app = builder.Build();
@@ -61,7 +41,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1"));
 }
 
-//ApplyMigrationsIfNeeded(app);
 
 var counter = Metrics.CreateCounter("TechChallengeApi", "Counts request to the metrics api endpoint",
     new CounterConfiguration
