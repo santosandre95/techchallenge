@@ -3,6 +3,9 @@ using Core.Entities;
 using Core.Validations;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using TechChallengeApi.Events;
+using TechChallengeApi.Events.TechChallengeApi.Events;
+using TechChallengeApi.RabbitMqEvents;
 
 namespace TechChallengeApi.Controllers
 {
@@ -11,10 +14,18 @@ namespace TechChallengeApi.Controllers
     public class ContactController : ControllerBase
     {
         private readonly IContactApplication _contactApplication;
+        private readonly RabbitMqEventBus _eventBus;
+        private IContactApplication @object;
 
-        public ContactController(IContactApplication contactApplication)
+        public ContactController(IContactApplication contactApplication, RabbitMqEventBus eventBus)
         {
             _contactApplication = contactApplication;
+            _eventBus = eventBus;
+        }
+
+        public ContactController(IContactApplication @object)
+        {
+            this.@object = @object;
         }
 
         /// <summary>
@@ -29,8 +40,9 @@ namespace TechChallengeApi.Controllers
         {
             try
             {
-                var contact = await _contactApplication.GetAsync(id);
-                return Ok(contact);
+                var contactBuscaEvent = new ContactBuscaIdEvent(id);
+                _eventBus.PublishContactBuscaId(contactBuscaEvent);
+                return Ok(contactBuscaEvent);
             }
             catch (KeyNotFoundException)
             {
@@ -50,7 +62,9 @@ namespace TechChallengeApi.Controllers
         {
             try
             {
-                await _contactApplication.AddAsync(contact);
+                var contactCreatedEvent = new ContactCreatedEvent(contact);
+                _eventBus.PublishContactCreated(contactCreatedEvent);
+
                 return CreatedAtAction(nameof(Get), new { id = contact.Id }, contact);
             }
             catch (ValidationException ex)
@@ -72,7 +86,8 @@ namespace TechChallengeApi.Controllers
         {
             try
             {
-                await _contactApplication.UpdateAsync(contact);
+                var contactUpdateEvent = new ContactUpdateEvent(contact);
+                _eventBus.PublishContactUpdated(contactUpdateEvent);
                 return NoContent();
             }
             catch (ValidationException ex)
@@ -97,7 +112,8 @@ namespace TechChallengeApi.Controllers
         {
             try
             {
-                await _contactApplication.DeleteAsync(id);
+                var contactDeleteEvent = new ContactDeletedEvent(id);
+                _eventBus.PublishContactDeleted(contactDeleteEvent); 
                 return NoContent();
             }
             catch (KeyNotFoundException)
@@ -114,8 +130,9 @@ namespace TechChallengeApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Contact>>> GetAll()
         {
-            var contacts = await _contactApplication.GetAllAsync();
-            return Ok(contacts);
+            var contactBuscaTodosEvent = new ContactBuscaTodosEvent();
+            _eventBus.PublishContactBuscaTodos(contactBuscaTodosEvent);
+            return Ok(contactBuscaTodosEvent);
         }
 
         /// <summary>
@@ -127,8 +144,9 @@ namespace TechChallengeApi.Controllers
         [HttpGet("Ddd/{ddd}")]
         public async Task<ActionResult<IEnumerable<Contact>>> GetContactsByDdd(string ddd)
         {
-            var contacts = await _contactApplication.GetContactsByDddAsync(ddd);
-            return Ok(contacts);
+            var contactBuscaDddEvent = new ContactBuscaDddEvent(ddd);
+            _eventBus.PublishContactBuscaDdd(contactBuscaDddEvent);
+            return Ok(contactBuscaDddEvent);
         }
     }
 }

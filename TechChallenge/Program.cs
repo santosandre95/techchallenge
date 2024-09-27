@@ -9,7 +9,11 @@ using Core.Entities;
 using Core.Validations;
 using FluentValidation;
 using Prometheus;
+
 using Microsoft.Data.SqlClient;
+
+using TechChallengeApi.RabbitMqEvents;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,6 +38,9 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 
+builder.Services.AddSingleton<RabbitMqEventBus>();
+
+
 var connectionString = configuration.GetConnectionString("SqlConnection");
 TestDatabaseConnection(connectionString);
 
@@ -46,6 +53,20 @@ builder.Services.AddScoped<IContactRepository, ContactRepository>();
 builder.Services.AddScoped<IContactApplication, ContactApplication>();
 builder.Services.AddScoped<IValidator<Contact>, ContactValidator>();
 
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("MyPolicy", builder =>
+    {
+        builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+    });
+});
+
+builder.Services.Configure<RabbitMqSettings>(configuration.GetSection("RabbitMq"));
+builder.Services.AddSingleton<RabbitMqEventBus>();
+
+
+
 var app = builder.Build();
 
 ApplyDatabaseMigrations(app);
@@ -53,12 +74,15 @@ ApplyDatabaseMigrations(app);
 // Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
+    app.UseCors("MyPolicy");
     app.UseDeveloperExceptionPage();
     app.UseSwagger();
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1"));
 }
 
-// Configure Prometheus metrics
+
+//ApplyMigrationsIfNeeded(app);
+
 var counter = Metrics.CreateCounter("TechChallengeApi", "Counts request to the metrics api endpoint",
     new CounterConfiguration
     {
