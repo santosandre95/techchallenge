@@ -58,6 +58,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+
 var counter = Metrics.CreateCounter("TechChallengeBuscaDdd", "Counts request to the metrics api endpoint",
     new CounterConfiguration
     {

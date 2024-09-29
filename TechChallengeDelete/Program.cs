@@ -40,7 +40,7 @@ builder.Services.AddCors(options =>
 
 
 
-builder.Services.Configure<RabbitMqSettings>(builder.Configuration.GetSection("RabbitMq"));
+//builder.Services.Configure<RabbitMqSettings>(builder.Configuration.GetSection("RabbitMq"));
 builder.Services.AddScoped<IContactApplication, ContactApplication>(); 
 builder.Services.AddSingleton<IHostedService, RabbitMqConsumer>();
 

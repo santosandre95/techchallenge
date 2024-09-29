@@ -7,9 +7,7 @@ EXPOSE 80
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0-nanoserver-1809 AS build
-ARG BUILD_CONFIGURATION=Release
-WORKDIR /src
+
 COPY ["TechChallengeBuscaDdd/TechChallengeBuscaDdd.csproj", "TechChallengeBuscaDdd/"]
 RUN dotnet restore "./TechChallengeBuscaDdd/TechChallengeBuscaDdd.csproj"
 COPY . .
