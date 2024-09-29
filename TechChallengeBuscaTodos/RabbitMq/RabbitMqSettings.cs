@@ -12,4 +12,5 @@
             return $"RabbitMq://{UserName}:{Password}@{Host}:{Port}";
         }
     }
+
 }
