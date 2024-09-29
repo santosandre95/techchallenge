@@ -1,38 +1,22 @@
-using Microsoft.EntityFrameworkCore;
-using Infrastructure.Repositories;
-using Infrastructure.Repositories.Interface;
 using Application.Applications.Interfaces;
 using Application.Applications;
-using FluentValidation.AspNetCore;
-using System.Reflection;
 using Core.Entities;
 using Core.Validations;
 using FluentValidation;
+using Infrastructure.Repositories.Interface;
+using Infrastructure.Repositories;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Prometheus;
-using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using TechChallengeApi.RabbitMq;
+using Microsoft.EntityFrameworkCore.Storage;
+using TechchallengeAdd.RabbitMq;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
 var configuration = builder.Configuration;
-
-builder.Services.AddControllers()
-    .ConfigureApiBehaviorOptions(options =>
-    {
-        options.SuppressModelStateInvalidFilter = true;
-    });
-
-builder.Services.AddFluentValidationAutoValidation()
-    .AddFluentValidationClientsideAdapters();
-
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
-{
-    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-    c.IncludeXmlComments(xmlPath);
-});
+// Add services to the container.
 
 var connectionString = configuration.GetConnectionString("SqlConnection");
 
@@ -45,7 +29,6 @@ builder.Services.AddScoped<IContactRepository, ContactRepository>();
 builder.Services.AddScoped<IContactApplication, ContactApplication>();
 builder.Services.AddScoped<IValidator<Contact>, ContactValidator>();
 
-
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("MyPolicy", builder =>
@@ -55,23 +38,27 @@ builder.Services.AddCors(options =>
 });
 
 
-builder.Services.AddSingleton<RabbitMqEventBus>();
-builder.Services.Configure<RabbitMqSettings>(configuration.GetSection("RabbitMq"));
-builder.Services.AddSingleton<RabbitMqEventBus>();
+
+builder.Services.Configure<RabbitMqSettings>(builder.Configuration.GetSection("RabbitMq"));
+builder.Services.AddScoped<IContactApplication, ContactApplication>(); // Registra IContactApplication como Scoped
+builder.Services.AddSingleton<IHostedService, RabbitMqConsumer>();
+
+builder.Services.AddControllers();
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+app.MapGet("/", () => "microsserviço Adicionar está online");
 
+// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseCors("MyPolicy");
-    app.UseDeveloperExceptionPage();
     app.UseSwagger();
-    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1"));
+    app.UseSwaggerUI();
 }
 
-//ApplyMigrationsIfNeeded(app);
-
-var counter = Metrics.CreateCounter("TechChallengeApi", "Counts request to the metrics api endpoint",
+var counter = Metrics.CreateCounter("TechChallengeAdd", "Counts request to the metrics api endpoint",
     new CounterConfiguration
     {
         LabelNames = new[] { "method", "endpoint" }
@@ -84,15 +71,16 @@ app.Use((context, next) =>
 });
 
 app.UseMetricServer();
-app.UseHttpMetrics();
+
+//ApplyMigrationsIfNeeded(app);
 
 app.UseHttpsRedirection();
-app.UseRouting();
+
 app.UseAuthorization();
+
 app.MapControllers();
 
 app.Run();
-
 void ApplyMigrationsIfNeeded(IHost app)
 {
     using (var scope = app.Services.CreateScope())

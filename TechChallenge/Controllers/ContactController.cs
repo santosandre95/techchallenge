@@ -3,6 +3,8 @@ using Core.Entities;
 using Core.Validations;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using TechChallengeApi.Events;
+using TechChallengeApi.RabbitMq;
 
 namespace TechChallengeApi.Controllers
 {
@@ -11,10 +13,12 @@ namespace TechChallengeApi.Controllers
     public class ContactController : ControllerBase
     {
         private readonly IContactApplication _contactApplication;
+        private readonly RabbitMqEventBus _eventBus;
 
-        public ContactController(IContactApplication contactApplication)
+        public ContactController(IContactApplication contactApplication, RabbitMqEventBus eventBus)
         {
             _contactApplication = contactApplication;
+            _eventBus = eventBus;
         }
 
         /// <summary>
@@ -23,14 +27,15 @@ namespace TechChallengeApi.Controllers
         /// <param name="id">Id do contato.</param>
         /// <returns>Um contato.</returns>
         /// <response code="200">Contato retornado com sucesso!</response>
-        /// <response code="404">Contato n�o encontrado :(</response>
+        /// <response code="404">Contato não encontrado :(</response>
         [HttpGet("{id}")]
         public async Task<ActionResult<Contact>> Get(Guid id)
         {
             try
             {
-                var contact = await _contactApplication.GetAsync(id);
-                return Ok(contact);
+                var contactBuscaEvent = new BuscaIdEvent(id);
+                _eventBus.PublishBuscaId(contactBuscaEvent);
+                return Ok(contactBuscaEvent);
             }
             catch (KeyNotFoundException)
             {
@@ -41,16 +46,18 @@ namespace TechChallengeApi.Controllers
         /// <summary>
         /// Cria um novo contato.
         /// </summary>
-        /// <param name="contact">Informa��es do contato a ser criado.</param>
+        /// <param name="contact">Informações do contato a ser criado.</param>
         /// <returns>Contato criado.</returns>
         /// <response code="201">Contato criado com sucesso!</response>
-        /// <response code="400">Conte�do inv�lido :(</response>
+        /// <response code="400">Conte�do inválido :(</response>
         [HttpPost]
         public async Task<ActionResult<Contact>> Add(Contact contact)
         {
             try
             {
-                await _contactApplication.AddAsync(contact);
+                var contactCreatedEvent = new CreateEvent(contact);
+                _eventBus.PublishCreated(contactCreatedEvent);
+
                 return CreatedAtAction(nameof(Get), new { id = contact.Id }, contact);
             }
             catch (ValidationException ex)
@@ -65,14 +72,15 @@ namespace TechChallengeApi.Controllers
         /// <param name="contact">Objeto de contato atualizado.</param>
         /// <returns>Retorna status code.</returns>
         /// <response code="204">Contato atualizado com sucesso!</response>
-        /// <response code="400">Conte�do inv�lido T.T</response>
+        /// <response code="400">Conte�do inválido T.T</response>
         /// <response code="404">Contato n�o encontrado :(</response>
         [HttpPut]
         public async Task<IActionResult> Update(Contact contact)
         {
             try
             {
-                await _contactApplication.UpdateAsync(contact);
+                var contactUpdateEvent = new UpdateEvent(contact);
+                _eventBus.PublishUpdated(contactUpdateEvent);
                 return NoContent();
             }
             catch (ValidationException ex)
@@ -97,7 +105,7 @@ namespace TechChallengeApi.Controllers
         {
             try
             {
-                await _contactApplication.DeleteAsync(id);
+                var contactDeleteEvent = new DeleteEvent(id);
                 return NoContent();
             }
             catch (KeyNotFoundException)
@@ -114,8 +122,9 @@ namespace TechChallengeApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Contact>>> GetAll()
         {
-            var contacts = await _contactApplication.GetAllAsync();
-            return Ok(contacts);
+            var contactBuscaTodosEvent = new BuscaTodosEvent();
+            _eventBus.PublishBuscaTodos(contactBuscaTodosEvent);
+            return Ok(contactBuscaTodosEvent);
         }
 
         /// <summary>
@@ -127,8 +136,9 @@ namespace TechChallengeApi.Controllers
         [HttpGet("Ddd/{ddd}")]
         public async Task<ActionResult<IEnumerable<Contact>>> GetContactsByDdd(string ddd)
         {
-            var contacts = await _contactApplication.GetContactsByDddAsync(ddd);
-            return Ok(contacts);
+            var contactBuscaDddEvent = new BuscaDddEvent(ddd);
+            _eventBus.PublishBuscaDdd(contactBuscaDddEvent);
+            return Ok(contactBuscaDddEvent);
         }
     }
 }

@@ -1,0 +1,6 @@
+@TechChallengeBuscaid_HostAddress = http://localhost:5043
+
+GET {{TechChallengeBuscaid_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

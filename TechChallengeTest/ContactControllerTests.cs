@@ -19,6 +19,7 @@ public class ContactControllerTests
     {
         _mockContactApplication = new Mock<IContactApplication>();
         _contactController = new ContactController(_mockContactApplication.Object);
+
     }
 
     private Contact CreateContact(string name = "Test", string email = "test@example.com", string phone = "12345678", string ddd = "11")
