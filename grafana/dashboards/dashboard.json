@@ -125,7 +125,56 @@
           "intervalFactor": 2,
           "legendFormat": "Endpoint {{endpoint}}",
           "refId": "A"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{job=\"add_service\"}[5m])) by (le, endpoint))",
+          "format": "time_series",
+          "instant": false,
+          "intervalFactor": 2,
+          "legendFormat": "Endpoint {{endpoint}}",
+          "refId": "B"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{job=\"buscaid_service\"}[5m])) by (le, endpoint))",
+          "format": "time_series",
+          "instant": false,
+          "intervalFactor": 2,
+          "legendFormat": "Endpoint {{endpoint}}",
+          "refId": "C"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{job=\"buscatodos_service\"}[5m])) by (le, endpoint))",
+          "format": "time_series",
+          "instant": false,
+          "intervalFactor": 2,
+          "legendFormat": "Endpoint {{endpoint}}",
+          "refId": "D"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{job=\"update_service\"}[5m])) by (le, endpoint))",
+          "format": "time_series",
+          "instant": false,
+          "intervalFactor": 2,
+          "legendFormat": "Endpoint {{endpoint}}",
+          "refId": "E"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{job=\"delete_service\"}[5m])) by (le, endpoint))",
+          "format": "time_series",
+          "instant": false,
+          "intervalFactor": 2,
+          "legendFormat": "Endpoint {{endpoint}}",
+          "refId": "F"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{job=\"buscaddd_service\"}[5m])) by (le, endpoint))",
+          "format": "time_series",
+          "instant": false,
+          "intervalFactor": 2,
+          "legendFormat": "Endpoint {{endpoint}}",
+          "refId": "G"
         }
+
       ],
       "gridPos": {
         "h": 9,
@@ -188,9 +237,59 @@
           "format": "time_series",
           "instant": false,
           "intervalFactor": 2,
-          "legendFormat": "CPU",
+          "legendFormat": "CPU -api",
           "refId": "A"
-        }
+        },
+        {
+         
+          "expr": "rate(process_cpu_seconds_total{job=\"add_service\"}[5m])",
+          "format": "time_series",
+          "instant": false,
+          "intervalFactor": 2,
+          "legendFormat": "CPU -add_service",
+          "refId": "B"
+        },
+        {
+        "expr": "rate(process_cpu_seconds_total{job=\"buscaid_service\"}[5m])",
+          "format": "time_series",
+          "instant": false,
+          "intervalFactor": 2,
+          "legendFormat": "CPU -buscaid_service",
+          "refId": "C"
+        },
+        {
+          "expr": "rate(process_cpu_seconds_total{job=\"buscatodos_service\"}[5m])",
+            "format": "time_series",
+            "instant": false,
+            "intervalFactor": 2,
+            "legendFormat": "CPU -buscatodos_service",
+            "refId": "D"
+          },
+          {
+            "expr": "rate(process_cpu_seconds_total{job=\"update_service\"}[5m])",
+              "format": "time_series",
+              "instant": false,
+              "intervalFactor": 2,
+              "legendFormat": "CPU -update_service",
+              "refId": "E"
+            },
+            {
+              "expr": "rate(process_cpu_seconds_total{job=\"delete_service\"}[5m])",
+                "format": "time_series",
+                "instant": false,
+                "intervalFactor": 2,
+                "legendFormat": "CPU -delete_service",
+                "refId": "F"
+            },
+            {
+              "expr": "rate(process_cpu_seconds_total{job=\"buscaddd_service\"}[5m])",
+                "format": "time_series",
+                "instant": false,
+                "intervalFactor": 2,
+                "legendFormat": "CPU -buscaddd_service",
+                "refId": "G"
+            }
+            
       ],
       "gridPos": {
         "h": 9,
@@ -253,9 +352,58 @@
           "format": "time_series",
           "instant": false,
           "intervalFactor": 2,
-          "legendFormat": "Memória",
+          "legendFormat": "Memória/Api",
           "refId": "A"
+        },
+        {
+          "expr": "process_private_memory_bytes{job=\"add_service\"}",
+          "format": "time_series",
+          "instant": false,
+          "intervalFactor": 2,
+          "legendFormat": "Memória/AddService",
+          "refId": "B"
+        },
+        {
+          "expr": "process_private_memory_bytes{job=\"buscaid_service\"}",
+          "format": "time_series",
+          "instant": false,
+          "intervalFactor": 2,
+          "legendFormat": "Memória/BuscaIdService",
+          "refId": "C"
+        },
+        {
+          "expr": "process_private_memory_bytes{job=\"buscatodos_service\"}",
+          "format": "time_series",
+          "instant": false,
+          "intervalFactor": 2,
+          "legendFormat": "Memória/BuscaTodosService",
+          "refId": "D"
+        },
+        {
+          "expr": "process_private_memory_bytes{job=\"update_service\"}",
+          "format": "time_series",
+          "instant": false,
+          "intervalFactor": 2,
+          "legendFormat": "Memória/UpdateService",
+          "refId": "F"
+        },
+        {
+          "expr": "process_private_memory_bytes{job=\"delete_service\"}",
+          "format": "time_series",
+          "instant": false,
+          "intervalFactor": 2,
+          "legendFormat": "Memória/DeleteService",
+          "refId": "F"
+        },
+        {
+          "expr": "process_private_memory_bytes{job=\"buscaddd_service\"}",
+          "format": "time_series",
+          "instant": false,
+          "intervalFactor": 2,
+          "legendFormat": "Memória/BuscaDddService",
+          "refId": "G"
         }
+        
       ],
       "gridPos": {
         "h": 9,
