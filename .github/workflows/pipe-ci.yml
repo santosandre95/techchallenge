@@ -1,5 +1,3 @@
-name: techchallenge-ci
-
 on:
   push:
     branches:
@@ -9,9 +7,8 @@ on:
       - main
 
 jobs:
-  build-and-test:
+  restore-api:
     runs-on: ubuntu-latest
-
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
@@ -21,11 +18,224 @@ jobs:
       with:
         dotnet-version: '8.0.x'
 
-    - name: Restore
+    - name: Restore TechChallengeApi
       run: dotnet restore TechChallenge/TechChallengeApi.csproj
 
-    - name: Build
-      run: dotnet build TechChallenge/TechChallengeApi.csproj --configuration Release --no-restore
+  restore-add:
+    runs-on: ubuntu-latest
+    needs: restore-api
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-    - name: Test
-      run: dotnet test TechChallengeTest/TechChallengeTest.csproj --configuration Release
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Restore TechChallengeAdd
+      run: dotnet restore TechChallengeAdd/TechChallengeAdd.csproj
+
+
+  restore-busca-ddd:
+    runs-on: ubuntu-latest
+    needs: restore-add
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Restore TechChallengeBuscaDdd
+      run: dotnet restore TechChallengeBuscaDdd/TechChallengeBuscaDdd.csproj
+
+  restore-busca-id:
+    runs-on: ubuntu-latest
+    needs: restore-busca-ddd
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Restore TechChallengeBuscaId
+      run: dotnet restore TechChallengeBuscaId/TechChallengeBuscaId.csproj
+
+  restore-busca-todos:
+    runs-on: ubuntu-latest
+    needs: restore-busca-id
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Restore TechChallengeBuscaTodos
+      run: dotnet restore TechChallengeBuscaTodos/TechChallengeBuscaTodos.csproj
+
+  restore-update:
+    runs-on: ubuntu-latest
+    needs: restore-busca-todos
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Restore TechChallengeUpdate
+      run: dotnet restore TechChallengeUpdate/TechChallengeUpdate.csproj
+
+  restore-delete:
+    runs-on: ubuntu-latest
+    needs: restore-update
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Restore TechChallengeDelete
+      run: dotnet restore TechChallengeDelete/TechChallengeDelete.csproj
+
+  build-api:
+    runs-on: ubuntu-latest
+    needs: restore-api
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Build TechChallengeApi
+      run: dotnet build TechChallenge/TechChallengeApi.csproj --configuration Release
+
+  build-add:
+    runs-on: ubuntu-latest
+    needs: restore-add
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Build TechChallengeAdd
+      run: dotnet build TechChallengeAdd/TechChallengeAdd.csproj --configuration Release
+
+  build-busca-ddd:
+    runs-on: ubuntu-latest
+    needs: restore-busca-ddd
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Build TechChallengeBuscaDdd
+      run: dotnet build TechChallengeBuscaDdd/TechChallengeBuscaDdd.csproj --configuration Release
+
+  build-busca-id:
+    runs-on: ubuntu-latest
+    needs: restore-busca-id
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Build TechChallengeBuscaId
+      run: dotnet build TechChallengeBuscaId/TechChallengeBuscaId.csproj --configuration Release
+
+  build-busca-todos:
+    runs-on: ubuntu-latest
+    needs: restore-busca-todos
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Build TechChallengeBuscaTodos
+      run: dotnet build TechChallengeBuscaTodos/TechChallengeBuscaTodos.csproj --configuration Release
+
+  build-update:
+    runs-on: ubuntu-latest
+    needs: restore-update
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Build TechChallengeUpdate
+      run: dotnet build TechChallengeUpdate/TechChallengeUpdate.csproj --configuration Release
+
+  build-delete:
+    runs-on: ubuntu-latest
+    needs: restore-delete
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Build TechChallengeDelete
+      run: dotnet build TechChallengeDelete/TechChallengeDelete.csproj --configuration Release
+
+  test:
+    runs-on: ubuntu-latest
+    needs: 
+      - build-api
+      - build-add
+      - build-busca-ddd
+      - build-busca-id
+      - build-busca-todos
+      - build-update
+      - build-delete
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Test Projects
+      run: |
+        dotnet test TechChallengeTest/TechChallengeTest.csproj --configuration Release
