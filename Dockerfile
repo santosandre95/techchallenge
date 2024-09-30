@@ -1,7 +1,6 @@
 # Estágio base para runtime
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 ENV ASPNETCORE_URLS http://*:80
-ENV ASPNETCORE_URLS https://*:80
 ENV ASPNETCORE_ENVIRONMENT=Development
 WORKDIR /app
 EXPOSE 80

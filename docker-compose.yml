@@ -1,4 +1,17 @@
 services:
+
+  rabbitmq:
+    image: masstransit/rabbitmq:latest
+    container_name: rabbitmq
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    volumes:
+       - ./rabbitmq/dados:/var/lib/rabbitmq/
+    depends_on:
+      - grafana
+    networks:
+      - techchallenge_techchallenge-network
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: sqlserver
@@ -11,6 +24,8 @@ services:
       - 1433
     volumes:
       - sqlserver-data:/var/opt/mssql
+    depends_on:
+      - rabbitmq
     networks:
       - techchallenge_techchallenge-network
 
@@ -153,20 +168,9 @@ services:
       - prometheus
     networks:
       - techchallenge_techchallenge-network
-  rabbitmq:
-    image: masstransit/rabbitmq:latest
-    container_name: rabbitmq
-    ports:
-      - "15672:15672"
-      - "5672:5672"
-    volumes:
-       - ./rabbitmq/dados:/var/lib/rabbitmq/
-    depends_on:
-      - grafana
-    networks:
-      - techchallenge_techchallenge-network
 
 volumes:
+  rabbitmq:
   sqlserver-data:
   api:
   add_service:
@@ -177,7 +181,7 @@ volumes:
   update_service:
   prometheus-data:
   grafana-data:
-  rabbitmq:
+
 
 networks:
   techchallenge_techchallenge-network:
