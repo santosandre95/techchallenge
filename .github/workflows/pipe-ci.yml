@@ -7,7 +7,7 @@ on:
       - main
 
 jobs:
-  restore-api:
+  setup:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
@@ -18,215 +18,29 @@ jobs:
       with:
         dotnet-version: '8.0.x'
 
-    - name: Restore TechChallengeApi
-      run: dotnet restore TechChallenge/TechChallengeApi.csproj
-
-  restore-add:
+  build-and-restore:
     runs-on: ubuntu-latest
-    needs: restore-api
+    needs: setup
+    strategy:
+      matrix:
+        project:
+          - TechChallenge/TechChallengeApi.csproj
+          - TechChallengeAdd/TechChallengeAdd.csproj
+          - TechChallengeBuscaDdd/TechChallengeBuscaDdd.csproj
+          - TechChallengeBuscaId/TechChallengeBuscaId.csproj
+          - TechChallengeBuscaTodos/TechChallengeBuscaTodos.csproj
+          - TechChallengeUpdate/TechChallengeUpdate.csproj
+          - TechChallengeDelete/TechChallengeDelete.csproj
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+    - name: Restore project
+      run: dotnet restore ${{ matrix.project }}
 
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: '8.0.x'
-
-    - name: Restore TechChallengeAdd
-      run: dotnet restore TechChallengeAdd/TechChallengeAdd.csproj
-
-
-  restore-busca-ddd:
-    runs-on: ubuntu-latest
-    needs: restore-add
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: '8.0.x'
-
-    - name: Restore TechChallengeBuscaDdd
-      run: dotnet restore TechChallengeBuscaDdd/TechChallengeBuscaDdd.csproj
-
-  restore-busca-id:
-    runs-on: ubuntu-latest
-    needs: restore-busca-ddd
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: '8.0.x'
-
-    - name: Restore TechChallengeBuscaId
-      run: dotnet restore TechChallengeBuscaId/TechChallengeBuscaId.csproj
-
-  restore-busca-todos:
-    runs-on: ubuntu-latest
-    needs: restore-busca-id
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: '8.0.x'
-
-    - name: Restore TechChallengeBuscaTodos
-      run: dotnet restore TechChallengeBuscaTodos/TechChallengeBuscaTodos.csproj
-
-  restore-update:
-    runs-on: ubuntu-latest
-    needs: restore-busca-todos
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: '8.0.x'
-
-    - name: Restore TechChallengeUpdate
-      run: dotnet restore TechChallengeUpdate/TechChallengeUpdate.csproj
-
-  restore-delete:
-    runs-on: ubuntu-latest
-    needs: restore-update
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: '8.0.x'
-
-    - name: Restore TechChallengeDelete
-      run: dotnet restore TechChallengeDelete/TechChallengeDelete.csproj
-
-  build-api:
-    runs-on: ubuntu-latest
-    needs: restore-api
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: '8.0.x'
-
-    - name: Build TechChallengeApi
-      run: dotnet build TechChallenge/TechChallengeApi.csproj --configuration Release
-
-  build-add:
-    runs-on: ubuntu-latest
-    needs: restore-add
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: '8.0.x'
-
-    - name: Build TechChallengeAdd
-      run: dotnet build TechChallengeAdd/TechChallengeAdd.csproj --configuration Release
-
-  build-busca-ddd:
-    runs-on: ubuntu-latest
-    needs: restore-busca-ddd
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: '8.0.x'
-
-    - name: Build TechChallengeBuscaDdd
-      run: dotnet build TechChallengeBuscaDdd/TechChallengeBuscaDdd.csproj --configuration Release
-
-  build-busca-id:
-    runs-on: ubuntu-latest
-    needs: restore-busca-id
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: '8.0.x'
-
-    - name: Build TechChallengeBuscaId
-      run: dotnet build TechChallengeBuscaId/TechChallengeBuscaId.csproj --configuration Release
-
-  build-busca-todos:
-    runs-on: ubuntu-latest
-    needs: restore-busca-todos
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: '8.0.x'
-
-    - name: Build TechChallengeBuscaTodos
-      run: dotnet build TechChallengeBuscaTodos/TechChallengeBuscaTodos.csproj --configuration Release
-
-  build-update:
-    runs-on: ubuntu-latest
-    needs: restore-update
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: '8.0.x'
-
-    - name: Build TechChallengeUpdate
-      run: dotnet build TechChallengeUpdate/TechChallengeUpdate.csproj --configuration Release
-
-  build-delete:
-    runs-on: ubuntu-latest
-    needs: restore-delete
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: '8.0.x'
-
-    - name: Build TechChallengeDelete
-      run: dotnet build TechChallengeDelete/TechChallengeDelete.csproj --configuration Release
+    - name: Build project
+      run: dotnet build ${{ matrix.project }} --configuration Release
 
   test:
     runs-on: ubuntu-latest
-    needs: 
-      - build-api
-      - build-add
-      - build-busca-ddd
-      - build-busca-id
-      - build-busca-todos
-      - build-update
-      - build-delete
+    needs: build-and-restore
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
@@ -236,6 +50,5 @@ jobs:
       with:
         dotnet-version: '8.0.x'
 
-    - name: Test Projects
-      run: |
-        dotnet test TechChallengeTest/TechChallengeTest.csproj --configuration Release
+    - name: Run Tests
+      run: dotnet test TechChallengeTest/TechChallengeTest.csproj --configuration Release
