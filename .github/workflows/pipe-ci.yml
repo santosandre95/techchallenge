@@ -13,9 +13,9 @@ jobs:
       matrix:
         project:
           - TechChallenge/TechChallengeApi.csproj
-          - TechChallengeAdd/TechChallengeAdd.csproj
+          - TechchallengeAdd/TechchallengeAdd.csproj
           - TechChallengeBuscaDdd/TechChallengeBuscaDdd.csproj
-          - TechChallengeBuscaId/TechChallengeBuscaId.csproj
+          - TechChallengeBuscaid/TechChallengeBuscaid.csproj
           - TechChallengeBuscaTodos/TechChallengeBuscaTodos.csproj
           - TechChallengeUpdate/TechChallengeUpdate.csproj
           - TechChallengeDelete/TechChallengeDelete.csproj
