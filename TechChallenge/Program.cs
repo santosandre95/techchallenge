@@ -48,11 +48,13 @@ builder.Services.AddScoped<IValidator<Contact>, ContactValidator>();
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("MyPolicy", builder =>
+    options.AddPolicy("AllowAll", builder =>
     {
         builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
     });
 });
+
+
 
 
 builder.Services.AddSingleton<RabbitMqEventBus>();
@@ -63,7 +65,7 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseCors("MyPolicy");
+    app.UseCors("AllowAll");
     app.UseDeveloperExceptionPage();
     app.UseSwagger();
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1"));

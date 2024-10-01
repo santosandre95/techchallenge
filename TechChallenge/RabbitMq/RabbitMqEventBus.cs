@@ -34,38 +34,40 @@ namespace TechChallengeApi.RabbitMq
         }
 
    
-        public void PublishCreated(CreateEvent createdEvent)
+        public async Task PublishCreated(CreateEvent createdEvent)
         {
-            Publish("contact_created", createdEvent);
+            await Publish("contact_created", createdEvent);
         }
-        public void PublishDeleted(DeleteEvent deleteEvent)
+        public async Task PublishDeleted(DeleteEvent deleteEvent)
         {
-            Publish("contact_deleted", deleteEvent);
-        }
-
-        public void PublishUpdated(UpdateEvent  updateEvent)
-        {
-            Publish("contact_updated", updateEvent);
-        }
-        public void PublishBuscaId(BuscaIdEvent buscaidEvent)
-        {
-            Publish("contact_buscaid", buscaidEvent);
-        }
-        public void PublishBuscaDdd(BuscaDddEvent buscaDddEvent)
-        {
-            Publish("contact_buscaddd", buscaDddEvent);
-        }
-        public void PublishBuscaTodos(BuscaTodosEvent buscaTodosEvent)
-        {
-            Publish("contact_buscatodos", buscaTodosEvent);
+           await Publish("contact_deleted", deleteEvent);
         }
 
-        private void Publish<T>(string routingKey, T eventMessage)
+        public async Task PublishUpdated(UpdateEvent  updateEvent)
+        {
+            await Publish("contact_updated", updateEvent);
+        }
+        public async Task PublishBuscaId(BuscaIdEvent buscaidEvent)
+        {
+           await Publish("contact_buscaid", buscaidEvent);
+        }
+        public async Task PublishBuscaDdd(BuscaDddEvent buscaDddEvent)
+        {
+            await Publish("contact_buscaddd", buscaDddEvent);
+        }
+        public async Task PublishBuscaTodos(BuscaTodosEvent buscaTodosEvent)
+        {
+            await Publish("contact_buscatodos", buscaTodosEvent);
+        }
+
+        private async Task Publish<T>(string routingKey, T eventMessage)
         {
             var message = System.Text.Json.JsonSerializer.Serialize(eventMessage);
             var body = Encoding.UTF8.GetBytes(message);
 
-            _channel.BasicPublish(exchange: "", routingKey: routingKey, basicProperties: null, body: body);
+            await Task.Run(() =>
+                _channel.BasicPublish(exchange: "", routingKey: routingKey, basicProperties: null, body: body)
+            );
         }
     }
 }

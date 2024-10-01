@@ -34,7 +34,7 @@ namespace TechChallengeApi.Controllers
             try
             {
                 var contactBuscaEvent = new BuscaIdEvent(id);
-                _eventBus.PublishBuscaId(contactBuscaEvent);
+                await _eventBus.PublishBuscaId(contactBuscaEvent);
                 return Ok(contactBuscaEvent);
             }
             catch (KeyNotFoundException)
@@ -56,7 +56,7 @@ namespace TechChallengeApi.Controllers
             try
             {
                 var contactCreatedEvent = new CreateEvent(contact);
-                _eventBus.PublishCreated(contactCreatedEvent);
+               await  _eventBus.PublishCreated(contactCreatedEvent);
 
                 return CreatedAtAction(nameof(Get), new { id = contact.Id }, contact);
             }
@@ -80,7 +80,7 @@ namespace TechChallengeApi.Controllers
             try
             {
                 var contactUpdateEvent = new UpdateEvent(contact);
-                _eventBus.PublishUpdated(contactUpdateEvent);
+                await _eventBus.PublishUpdated(contactUpdateEvent);
                 return NoContent();
             }
             catch (ValidationException ex)
@@ -106,6 +106,7 @@ namespace TechChallengeApi.Controllers
             try
             {
                 var contactDeleteEvent = new DeleteEvent(id);
+                await _eventBus.PublishDeleted(contactDeleteEvent);
                 return NoContent();
             }
             catch (KeyNotFoundException)
@@ -123,7 +124,7 @@ namespace TechChallengeApi.Controllers
         public async Task<ActionResult<IEnumerable<Contact>>> GetAll()
         {
             var contactBuscaTodosEvent = new BuscaTodosEvent();
-            _eventBus.PublishBuscaTodos(contactBuscaTodosEvent);
+            await _eventBus.PublishBuscaTodos(contactBuscaTodosEvent);
             return Ok(contactBuscaTodosEvent);
         }
 
@@ -137,7 +138,7 @@ namespace TechChallengeApi.Controllers
         public async Task<ActionResult<IEnumerable<Contact>>> GetContactsByDdd(string ddd)
         {
             var contactBuscaDddEvent = new BuscaDddEvent(ddd);
-            _eventBus.PublishBuscaDdd(contactBuscaDddEvent);
+           await _eventBus.PublishBuscaDdd(contactBuscaDddEvent);
             return Ok(contactBuscaDddEvent);
         }
     }

@@ -2,11 +2,11 @@
 {
     public class BuscaDddEvent
     {
-        public string Ddd { get; }
+        public  string Ddd { get; }
 
         public BuscaDddEvent(string Ddd)
         {
-            Ddd = Ddd;
+            this.Ddd = Ddd;
         }
     }
 }

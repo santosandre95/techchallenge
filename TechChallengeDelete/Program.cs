@@ -32,7 +32,7 @@ builder.Services.AddScoped<IValidator<Contact>, ContactValidator>();
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("MyPolicy", builder =>
+    options.AddPolicy("AllowAll", builder =>
     {
         builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
     });
