@@ -47,10 +47,13 @@ public class ContactControllerTests
         _mockContactApplication.Setup(app => app.GetAsync(contactId)).ReturnsAsync(contact);
 
         var result = await _contactController.Get(contactId);
+ 
 
-        var okResult = Assert.IsType<OkObjectResult>(result.Result);
+        OkObjectResult?  okResult = Assert.IsType<OkObjectResult>(result.Result);
         _mockEventBus.Verify(bus => bus.PublishBuscaId(It.IsAny<BuscaIdEvent>()), Times.Once);
+#pragma warning disable CS8600 // Conversão de literal nula ou possível valor nulo em tipo não anulável.
         Assert.Equal(contactId, ((BuscaIdEvent)okResult.Value).Id);
+#pragma warning restore CS8600 // Conversão de literal nula ou possível valor nulo em tipo não anulável.
     }
 
     [Fact]
