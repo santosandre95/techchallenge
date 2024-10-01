@@ -8,8 +8,6 @@ services:
       - "5672:5672"
     volumes:
        - ./rabbitmq/dados:/var/lib/rabbitmq/
-    depends_on:
-      - grafana
     networks:
       - techchallenge_techchallenge-network
   sqlserver:
@@ -56,7 +54,7 @@ services:
       context: .
       dockerfile: ./TechchallengeBuscaId/Dockerfile
     depends_on:
-      - sqlserver
+      - api
     networks:
       - techchallenge_techchallenge-network
 
@@ -72,7 +70,7 @@ services:
       context: .
       dockerfile: ./TechChallengeAdd/Dockerfile
     depends_on:
-      - sqlserver
+      - buscaid_service
     networks:
       - techchallenge_techchallenge-network
 
@@ -88,7 +86,7 @@ services:
       context: .
       dockerfile: ./TechchallengeBuscaTodos/Dockerfile
     depends_on:
-      - sqlserver
+      - add_service
     networks:
       - techchallenge_techchallenge-network
 
@@ -104,7 +102,7 @@ services:
       context: .
       dockerfile: ./TechchallengeUpdate/Dockerfile
     depends_on:
-      - sqlserver
+      - buscatodos_service
     networks:
       - techchallenge_techchallenge-network
   delete_service:
@@ -119,7 +117,7 @@ services:
       context: .
       dockerfile: ./TechchallengeDelete/Dockerfile
     depends_on:
-      - sqlserver
+      - update_service
     networks:
       - techchallenge_techchallenge-network
 
@@ -135,7 +133,7 @@ services:
       context: .
       dockerfile: ./TechchallengeBuscaDdd/Dockerfile
     depends_on:
-      - sqlserver
+      - delete_service
     networks:
       - techchallenge_techchallenge-network
 
