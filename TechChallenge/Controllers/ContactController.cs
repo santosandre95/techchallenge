@@ -15,18 +15,15 @@ namespace TechChallengeApi.Controllers
     {
         private readonly IContactApplication _contactApplication;
         private readonly RabbitMqEventBus _eventBus;
-        private IContactApplication @object;
-
-        public ContactController(IContactApplication contactApplication, RabbitMqEventBus eventBus)
+      
+        public ContactController( RabbitMqEventBus eventBus,IContactApplication contactApplication)
         {
             _contactApplication = contactApplication;
+           
             _eventBus = eventBus;
         }
 
-        public ContactController(IContactApplication @object)
-        {
-            this.@object = @object;
-        }
+ 
 
         /// <summary>
         /// Busca contato por Id.
@@ -65,7 +62,7 @@ namespace TechChallengeApi.Controllers
                 var contactCreatedEvent = new ContactCreatedEvent(contact);
                 _eventBus.PublishContactCreated(contactCreatedEvent);
 
-                return CreatedAtAction(nameof(Get), new { id = contact.Id }, contact);
+                return Ok(contactCreatedEvent);
             }
             catch (ValidationException ex)
             {

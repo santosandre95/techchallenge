@@ -3,16 +3,15 @@ using Infrastructure.Repositories;
 using Infrastructure.Repositories.Interface;
 using Application.Applications.Interfaces;
 using Application.Applications;
-using FluentValidation.AspNetCore;
+
 using System.Reflection;
 using Core.Entities;
 using Core.Validations;
+using FluentValidation.AspNetCore;
 using FluentValidation;
 using Prometheus;
-
-using Microsoft.Data.SqlClient;
-
-using TechChallengeApi.RabbitMqEvents;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Storage;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -28,7 +27,6 @@ builder.Services.AddControllers()
 builder.Services.AddFluentValidationAutoValidation()
     .AddFluentValidationClientsideAdapters();
 
-// Configura Swagger/OpenAPI
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -37,12 +35,7 @@ builder.Services.AddSwaggerGen(c =>
     c.IncludeXmlComments(xmlPath);
 });
 
-
-builder.Services.AddSingleton<RabbitMqEventBus>();
-
-
 var connectionString = configuration.GetConnectionString("SqlConnection");
-TestDatabaseConnection(connectionString);
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
@@ -62,16 +55,10 @@ builder.Services.AddCors(options =>
     });
 });
 
-builder.Services.Configure<RabbitMqSettings>(configuration.GetSection("RabbitMq"));
-builder.Services.AddSingleton<RabbitMqEventBus>();
-
 
 
 var app = builder.Build();
 
-ApplyDatabaseMigrations(app);
-
-// Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseCors("MyPolicy");
@@ -79,7 +66,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1"));
 }
-
 
 //ApplyMigrationsIfNeeded(app);
 
@@ -99,42 +85,22 @@ app.UseMetricServer();
 app.UseHttpMetrics();
 
 app.UseHttpsRedirection();
-
 app.UseRouting();
-
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();
 
-void TestDatabaseConnection(string connectionString)
+void ApplyMigrationsIfNeeded(IHost app)
 {
-    try
+    using (var scope = app.Services.CreateScope())
     {
-        using (var connection = new SqlConnection(connectionString))
-        {
-            connection.Open();
-            Console.WriteLine("Connection to the database was successful.");
-        }
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Failed to connect to the database: {ex.Message}");
-    }
-}
+        var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var dbExists = context.Database.GetService<IDatabaseCreator>() is RelationalDatabaseCreator databaseCreator && databaseCreator.Exists();
 
-void ApplyDatabaseMigrations(WebApplication app)
-{
-    var migrationFlagFile = "/app/hasRunMigrations";
-
-    if (!File.Exists(migrationFlagFile))
-    {
-        using (var scope = app.Services.CreateScope())
+        if (!dbExists)
         {
-            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-            dbContext.Database.Migrate();
-            File.Create(migrationFlagFile).Dispose();
+            context.Database.Migrate();
         }
     }
 }
