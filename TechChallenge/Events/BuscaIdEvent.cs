@@ -2,10 +2,10 @@
 {
     public class BuscaIdEvent
     {
-        public Guid Id { get; }
+        public Guid? Id { get; }
         public BuscaIdEvent(Guid id)
         {
-            Id = id;
+            this.Id = id;
         }
     }
 }

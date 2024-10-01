@@ -71,7 +71,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1"));
 }
 
-//ApplyMigrationsIfNeeded(app);
+ApplyMigrationsIfNeeded(app);
 
 var counter = Metrics.CreateCounter("TechChallengeApi", "Counts request to the metrics api endpoint",
     new CounterConfiguration

@@ -55,8 +55,27 @@ namespace TechChallengeApi.Controllers
         {
             try
             {
-                var contactCreatedEvent = new CreateEvent(contact);
-               await  _eventBus.PublishCreated(contactCreatedEvent);
+
+                var contactCreate = new Contact
+                {
+                    Id = Guid.NewGuid(),
+                    Name = contact.Name,
+                    Email = contact.Email,
+                    Phone = contact.Phone,
+                    Ddd = contact.Ddd
+                };
+
+
+                CreateEvent createEvent = new CreateEvent
+                                            (
+                                            contactCreate.Id,
+                                            contactCreate.Name,
+                                            contactCreate.Email, 
+                                            contactCreate.Phone, 
+                                            contactCreate.Ddd
+                                            );
+
+                await _eventBus.PublishCreated(createEvent);
 
                 return CreatedAtAction(nameof(Get), new { id = contact.Id }, contact);
             }
