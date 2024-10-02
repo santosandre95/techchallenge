@@ -1,13 +1,17 @@
-
+using Application.Applications.Interfaces;
+using Application.Applications;
+using Core.Entities;
+using Core.Validations;
+using FluentValidation;
+using Infrastructure.Repositories.Interface;
+using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Prometheus;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
-using Infrastructure.Repositories;
-using Application.Applications.Interfaces;
-using Application.Applications;
-using TechChallengeBuscaTodos.RabbitMq;
 
+using TechChallengeBuscaTodos.RabbitMq;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,7 +26,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString);
 }, ServiceLifetime.Scoped);
 
-
+builder.Services.AddScoped<IContactRepository, ContactRepository>();
+builder.Services.AddScoped<IContactApplication, ContactApplication>();
+builder.Services.AddScoped<IValidator<Contact>, ContactValidator>();
 
 builder.Services.AddCors(options =>
 {
@@ -35,7 +41,7 @@ builder.Services.AddCors(options =>
 
 
 builder.Services.Configure<RabbitMqSettings>(builder.Configuration.GetSection("RabbitMq"));
-builder.Services.AddScoped<IContactApplication, ContactApplication>();
+builder.Services.AddScoped<IContactApplication, ContactApplication>(); // Registra IContactApplication como Scoped
 builder.Services.AddSingleton<IHostedService, RabbitMqConsumer>();
 
 builder.Services.AddControllers();
@@ -44,7 +50,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
-app.MapGet("/", () => "microsserviço  Buscatodos está online");
+app.MapGet("/", () => "microsserviço BuscaTodos está online");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -53,7 +59,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-var counter = Metrics.CreateCounter("TechChallengeBuscaTodos", "Counts request to the metrics api endpoint",
+var counter = Metrics.CreateCounter("TechChallengeBuyscaTodos", "Counts request to the metrics api endpoint",
     new CounterConfiguration
     {
         LabelNames = new[] { "method", "endpoint" }

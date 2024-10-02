@@ -29,7 +29,7 @@ namespace TechChallengeBuscaTodos.RabbitMq
             _channel = _connection.CreateModel();
             _serviceProvider = serviceProvider;
 
-            _channel.QueueDeclare(queue: "contact_updated", durable: false, exclusive: false, autoDelete: false, arguments: null);
+            _channel.QueueDeclare(queue: "contact_buscatodos", durable: false, exclusive: false, autoDelete: false, arguments: null);
         }
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
@@ -53,7 +53,7 @@ namespace TechChallengeBuscaTodos.RabbitMq
                 }
             };
 
-            _channel.BasicConsume(queue: "contact_updated", autoAck: true, consumer: consumer);
+            _channel.BasicConsume(queue: "contact_buscatodos", autoAck: true, consumer: consumer);
 
             return Task.CompletedTask;
         }

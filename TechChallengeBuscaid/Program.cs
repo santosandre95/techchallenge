@@ -73,7 +73,7 @@ app.Use((context, next) =>
 
 app.UseMetricServer();
 
-ApplyMigrationsIfNeeded(app);
+//ApplyMigrationsIfNeeded(app);
 
 app.UseHttpsRedirection();
 
