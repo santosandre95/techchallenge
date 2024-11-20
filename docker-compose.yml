@@ -52,7 +52,7 @@ services:
       - ConnectionStrings__SqlConnection=Server=sqlserver,1433;Database=TechChallenge;User Id=sa;Password=tech_Chalenge123!;TrustServerCertificate=True
     build:
       context: .
-      dockerfile: ./TechchallengeBuscaId/Dockerfile
+      dockerfile: ./TechChallengeBuscaid/Dockerfile
     depends_on:
       - api
     networks:
