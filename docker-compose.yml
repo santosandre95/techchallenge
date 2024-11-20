@@ -37,7 +37,7 @@ services:
       - ConnectionStrings__SqlConnection=Server=sqlserver,1433;Database=TechChallenge;User Id=sa;Password=tech_Chalenge123!;TrustServerCertificate=True
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: ./Dockerfile
     depends_on:
       - sqlserver
     networks:
@@ -68,7 +68,7 @@ services:
       - ConnectionStrings__SqlConnection=Server=sqlserver,1433;Database=TechChallenge;User Id=sa;Password=tech_Chalenge123!;TrustServerCertificate=True
     build:
       context: .
-      dockerfile: ./TechChallengeAdd/Dockerfile
+      dockerfile: ./TechchallengeAdd/Dockerfile
     depends_on:
       - buscaid_service
     networks:
@@ -84,7 +84,7 @@ services:
       - ConnectionStrings__SqlConnection=Server=sqlserver,1433;Database=TechChallenge;User Id=sa;Password=tech_Chalenge123!;TrustServerCertificate=True
     build:
       context: .
-      dockerfile: ./TechchallengeBuscaTodos/Dockerfile
+      dockerfile: ./TechChallengeBuscaTodos/Dockerfile
     depends_on:
       - add_service
     networks:
@@ -92,7 +92,7 @@ services:
 
   update_service:
     container_name: update_service
-    image: ${DOCKER_REGISTRY:-}techchallengeupbate
+    image: ${DOCKER_REGISTRY:-}techchallengeupdate
     ports:
       - "8084:80"
     environment:
@@ -100,7 +100,7 @@ services:
       - ConnectionStrings__SqlConnection=Server=sqlserver,1433;Database=TechChallenge;User Id=sa;Password=tech_Chalenge123!;TrustServerCertificate=True
     build:
       context: .
-      dockerfile: ./TechchallengeUpdate/Dockerfile
+      dockerfile: ./TechChallengeUpdate/Dockerfile
     depends_on:
       - buscatodos_service
     networks:
@@ -115,7 +115,7 @@ services:
       - ConnectionStrings__SqlConnection=Server=sqlserver,1433;Database=TechChallenge;User Id=sa;Password=tech_Chalenge123!;TrustServerCertificate=True
     build:
       context: .
-      dockerfile: ./TechchallengeDelete/Dockerfile
+      dockerfile: ./TechChallengeDelete/Dockerfile
     depends_on:
       - update_service
     networks:
@@ -131,7 +131,7 @@ services:
       - ConnectionStrings__SqlConnection=Server=sqlserver,1433;Database=TechChallenge;User Id=sa;Password=tech_Chalenge123!;TrustServerCertificate=True
     build:
       context: .
-      dockerfile: ./TechchallengeBuscaDdd/Dockerfile
+      dockerfile: ./TechChallengeBuscaDdd/Dockerfile
     depends_on:
       - delete_service
     networks:
