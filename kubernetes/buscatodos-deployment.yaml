@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: techchallengebuscatodos
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: techchallengebuscatodos
+  template:
+    metadata:
+      labels:
+        app: techchallengebuscatodos
+    spec:
+      containers:
+      - name: techchallengebuscatodos
+        image: santosandre/techchallengebuscatodos:1
+        ports:
+        - containerPort: 80
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Development"
+        - name: ConnectionStrings__SqlConnection
+          value: "Server=sqlserver,1433;Database=TechChallenge;User Id=sa;Password=tech_Chalenge123!;TrustServerCertificate=True"
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          periodSeconds: 10
+          failureThreshold: 3
+          initialDelaySeconds: 20
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          periodSeconds: 10
+          failureThreshold: 5
+          initialDelaySeconds: 3
+

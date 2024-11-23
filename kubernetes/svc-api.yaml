@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: techchallengeapi
+spec:
+  selector:
+    app: techchallengeapi
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+      nodePort: 30081
+  type: NodePort

@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: db-configmap
+data:
+  ACCEPT_EULA: "Y"
+  MSSQL_SA_PASSWORD: "tech_Chalenge123!"
