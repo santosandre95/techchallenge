@@ -8,9 +8,9 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: ./techchallenge/grafana/data  
+    path: /absolute/path/to/techchallenge/grafana/data 
     type: Directory
-
+---
 apiVersion: v1
 kind: PersistentVolume
 metadata:
@@ -21,7 +21,7 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: ./techchallenge/grafana/provisioning  
+    path: /absolute/path/to/techchallenge/grafana/provisioning 
     type: Directory
 ---
 apiVersion: v1
@@ -34,5 +34,5 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: ./techchallenge/grafana/dashboards  
+    path: /absolute/path/to/techchallenge/grafana/dashboards  
     type: Directory

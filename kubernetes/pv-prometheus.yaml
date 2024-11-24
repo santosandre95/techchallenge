@@ -8,5 +8,5 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: ./techchallenge/prometheus  
+    path: /absolute/path/to/techchallenge/prometheus
     type: Directory

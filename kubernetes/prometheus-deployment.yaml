@@ -14,19 +14,8 @@ spec:
     spec:
       containers:
       - name: prometheus
-        image: prom/prometheus:latest
+        image: santosandre/techchallengeprometheus:1
         ports:
         - containerPort: 9090
-        volumeMounts:
-        - name: prometheus-config
-          mountPath: /etc/prometheus
-        - name: prometheus-storage
-          mountPath: /prometheus
-      volumes:
-      - name: prometheus-config
-        hostPath:
-          path: ./techchallenge/prometheus.yml  
-          type: File
-      - name: prometheus-storage
         persistentVolumeClaim:
           claimName: prometheus-pvc
