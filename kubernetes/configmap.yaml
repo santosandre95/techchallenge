@@ -1,0 +1,61 @@
+# ConfigMap para o Prometheus
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval: 15s
+
+    scrape_configs:
+      - job_name: 'api'
+        metrics_path: /metrics
+        static_configs:
+          - targets: ['api:80']
+      - job_name: 'add_service'
+        metrics_path: /metrics
+        static_configs:
+          - targets: ['add_service:80']
+      - job_name: 'buscadd_service'
+        metrics_path: /metrics
+        static_configs:
+          - targets: ['buscadd_service:80']
+      - job_name: 'buscaid_service'
+        metrics_path: /metrics
+        static_configs:
+          - targets: ['buscaid_service:80']
+      - job_name: 'buscatodos_service'
+        metrics_path: /metrics
+        static_configs:
+          - targets: ['buscatodos_service:80']
+      - job_name: 'delete_service'
+        metrics_path: /metrics
+        static_configs:
+          - targets: ['delete_service:80']
+      - job_name: 'update_service'
+        metrics_path: /metrics
+        static_configs:
+          - targets: ['update_service:80']
+---
+# ConfigMap para o SQL Server
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sql-config
+data:
+  ACCEPT_EULA: "Y"
+---
+# ConfigMap para a aplicação
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  ASPNETCORE_URLS: "http://*:80"
+  ASPNETCORE_ENVIRONMENT: "Development"
+  RabbitMq__Host: "rabbitmq"
+  RabbitMq__Port: "5672"
+  RabbitMq__UserName: "guest"
+  RabbitMq__Password: "guest"
+

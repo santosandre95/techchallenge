@@ -1,0 +1,107 @@
+# PersistentVolume para Dados do Grafana
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: grafana-pv
+  labels:
+    app: grafana
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: manual
+  hostPath:
+    path: /Users/ligiaferrazfranco/Downloads/techchallenge-main/grafana/data
+    type: Directory
+---
+# PersistentVolume para Provisionamento do Grafana
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: grafana-provisioning-pv
+  labels:
+    app: grafana
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: manual
+  hostPath:
+    path: /Users/ligiaferrazfranco/Downloads/techchallenge-main/grafana/provisioning
+    type: Directory
+---
+# PersistentVolume para Dashboards do Grafana
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: grafana-dashboards-pv
+  labels:
+    app: grafana
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: manual
+  hostPath:
+    path: /Users/ligiaferrazfranco/Downloads/techchallenge-main/grafana/dashboards
+    type: Directory
+---
+# PersistentVolume
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: prometheus-pv
+  labels:
+    app: prometheus
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: manual
+  hostPath:
+    path: /Users/ligiaferrazfranco/Downloads/techchallenge-main/prometheus
+    type: Directory
+---
+# PersistentVolume
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: rabbitmq-pv
+  labels:
+    app: rabbitmq
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: manual
+  hostPath:
+    path: /Users/ligiaferrazfranco/Downloads/techchallenge-main/rabbitmq/dados
+    type: Directory
+---
+# PersistentVolume
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: sql-pv
+  labels:
+    app: sqlserver
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: manual
+  hostPath:
+    path: /Users/ligiaferrazfranco/Downloads/techchallenge-main/sqlserver
+    type: Directory
