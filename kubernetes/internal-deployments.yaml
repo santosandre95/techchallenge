@@ -1,0 +1,300 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: techchallengeapi
+  labels:
+    app: techchallengeapi
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: techchallengeapi
+  template:
+    metadata:
+      labels:
+        app: techchallengeapi
+    spec:
+      containers:
+      - name: techchallengeapi
+        image: ligiafranco/techchallengeapi:latest  
+        ports:
+        - containerPort: 80
+        envFrom:
+        - configMapRef:
+            name: app-config
+        - secretRef:
+            name: db-credentials
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 80
+            scheme: HTTP
+          initialDelaySeconds: 30
+          periodSeconds: 30
+          failureThreshold: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 80
+            scheme: HTTP
+          initialDelaySeconds: 30
+          periodSeconds: 30
+          failureThreshold: 10
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: techchallengeddd
+  labels:
+    app: techchallengeddd
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: techchallengeddd
+  template:
+    metadata:
+      labels:
+        app: techchallengeddd
+    spec:
+      imagePullSecrets:
+        - name: docker-hub-credentials
+      containers:
+        - name: techchallengeddd
+          image: santosandre/techchallengeddd:1
+          ports:
+            - containerPort: 80
+          envFrom:
+            - configMapRef:
+                name: app-config
+            - secretRef:
+                name: db-credentials
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            failureThreshold: 5
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: techchallengebuscaid
+  labels:
+    app: techchallengebuscaid
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: techchallengebuscaid
+  template:
+    metadata:
+      labels:
+        app: techchallengebuscaid
+    spec:
+      imagePullSecrets:
+        - name: docker-hub-credentials
+      containers:
+        - name: techchallengebuscaid
+          image: santosandre/techchallengebuscaid:1
+          ports:
+            - containerPort: 80
+          envFrom:
+            - configMapRef:
+                name: app-config
+            - secretRef:
+                name: db-credentials
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            failureThreshold: 5
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: techchallengebuscatodos
+  labels:
+    app: techchallengebuscatodos
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: techchallengebuscatodos
+  template:
+    metadata:
+      labels:
+        app: techchallengebuscatodos
+    spec:
+      imagePullSecrets:
+        - name: docker-hub-credentials
+      containers:
+        - name: techchallengebuscatodos
+          image: santosandre/techchallengebuscatodos:1
+          ports:
+            - containerPort: 80
+          envFrom:
+            - configMapRef:
+                name: app-config
+            - secretRef:
+                name: db-credentials
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            failureThreshold: 5
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: techchallengedelete
+  labels:
+    app: techchallengedelete
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: techchallengedelete
+  template:
+    metadata:
+      labels:
+        app: techchallengedelete
+    spec:
+      imagePullSecrets:
+        - name: docker-hub-credentials
+      containers:
+        - name: techchallengedelete
+          image: santosandre/techchallengedelete:1
+          ports:
+            - containerPort: 80
+          envFrom:
+            - configMapRef:
+                name: app-config
+            - secretRef:
+                name: db-credentials
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            failureThreshold: 5
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: techchallengeupdate
+  labels:
+    app: techchallengeupdate
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: techchallengeupdate
+  template:
+    metadata:
+      labels:
+        app: techchallengeupdate
+    spec:
+      imagePullSecrets:
+        - name: docker-hub-credentials
+      containers:
+        - name: techchallengeupdate
+          image: santosandre/techchallengeupdate:1
+          ports:
+            - containerPort: 80
+          envFrom:
+            - configMapRef:
+                name: app-config
+            - secretRef:
+                name: db-credentials
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            failureThreshold: 5
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: techchallengeadd
+  labels:
+    app: techchallengeadd
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: techchallengeadd
+  template:
+    metadata:
+      labels:
+        app: techchallengeadd
+    spec:
+      imagePullSecrets:
+        - name: docker-hub-credentials
+      containers:
+        - name: techchallengeadd
+          image: santosandre/techchallengeadd:1
+          ports:
+            - containerPort: 80
+          envFrom:
+            - configMapRef:
+                name: app-config
+            - secretRef:
+                name: db-credentials
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            failureThreshold: 5

@@ -33,9 +33,9 @@ builder.Services.AddSwaggerGen(c =>
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
     c.IncludeXmlComments(xmlPath);
 });
+builder.Services.AddHealthChecks();
 
 var connectionString = configuration.GetConnectionString("SqlConnection");
-
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseSqlServer(connectionString);
@@ -45,7 +45,6 @@ builder.Services.AddScoped<IContactRepository, ContactRepository>();
 builder.Services.AddScoped<IContactApplication, ContactApplication>();
 builder.Services.AddScoped<IValidator<Contact>, ContactValidator>();
 
-
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", builder =>
@@ -53,9 +52,6 @@ builder.Services.AddCors(options =>
         builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
     });
 });
-
-
-
 
 builder.Services.AddSingleton<RabbitMqEventBus>();
 builder.Services.Configure<RabbitMqSettings>(configuration.GetSection("RabbitMq"));
@@ -87,8 +83,8 @@ app.Use((context, next) =>
 
 app.UseMetricServer();
 app.UseHttpMetrics();
+app.MapHealthChecks("/health");
 
-app.UseHttpsRedirection();
 app.UseRouting();
 app.UseAuthorization();
 app.MapControllers();
