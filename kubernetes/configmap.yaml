@@ -1,4 +1,3 @@
-# ConfigMap para o Prometheus
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -38,7 +37,6 @@ data:
         static_configs:
           - targets: ['update_service:80']
 ---
-# ConfigMap para o SQL Server
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -46,7 +44,6 @@ metadata:
 data:
   ACCEPT_EULA: "Y"
 ---
-# ConfigMap para a aplicação
 apiVersion: v1
 kind: ConfigMap
 metadata:
