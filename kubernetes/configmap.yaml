@@ -8,34 +8,34 @@ data:
       scrape_interval: 15s
 
     scrape_configs:
-      - job_name: 'api'
+      - job_name: 'techchallengeapi'
         metrics_path: /metrics
         static_configs:
-          - targets: ['api:80']
-      - job_name: 'add_service'
+          - targets: ['techchallengeapi:80']
+      - job_name: 'techchallengeadd'
         metrics_path: /metrics
         static_configs:
-          - targets: ['add_service:80']
-      - job_name: 'buscadd_service'
+          - targets: ['techchallengeadd:80']
+      - job_name: 'techchallengeddd'
         metrics_path: /metrics
         static_configs:
-          - targets: ['buscadd_service:80']
-      - job_name: 'buscaid_service'
+          - targets: ['techchallengeddd:80']
+      - job_name: 'techchallengebuscaid'
         metrics_path: /metrics
         static_configs:
-          - targets: ['buscaid_service:80']
-      - job_name: 'buscatodos_service'
+          - targets: ['techchallengebuscaid:80']
+      - job_name: 'techchallengebuscatodos'
         metrics_path: /metrics
         static_configs:
-          - targets: ['buscatodos_service:80']
-      - job_name: 'delete_service'
+          - targets: ['techchallengebuscatodos:80']
+      - job_name: 'techchallengedelete'
         metrics_path: /metrics
         static_configs:
-          - targets: ['delete_service:80']
-      - job_name: 'update_service'
+          - targets: ['techchallengedelete:80']
+      - job_name: 'techchallengeupdate'
         metrics_path: /metrics
         static_configs:
-          - targets: ['update_service:80']
+          - targets: ['techchallengeupdate:80']
 ---
 apiVersion: v1
 kind: ConfigMap
