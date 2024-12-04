@@ -1,0 +1,34 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  
+  - job_name: 'api'
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['api:80']
+  - job_name: 'add_service'
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['add_service:80']
+  - job_name: 'buscadd_service'
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['buscadd_service:80']
+  - job_name: 'buscaid_service'
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['buscaid_service:80']
+  - job_name: 'buscatodos_service'
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['buscatodos_service:80']
+  - job_name: 'delete_service'
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['delete_service:80']
+  - job_name: 'update_service'
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['update_service:80']
+

@@ -12,7 +12,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   storageClassName: manual
   hostPath:
-    path: /Users/ligiaferrazfranco/Downloads/techchallenge-main/grafana/data
+    path: /Pos/techchallenge/grafana/data
     type: Directory
 ---
 apiVersion: v1
@@ -29,7 +29,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   storageClassName: manual
   hostPath:
-    path: /Users/ligiaferrazfranco/Downloads/techchallenge-main/grafana/provisioning
+    path:  /Pos/techchallenge/grafana/provisioning
     type: Directory
 ---
 apiVersion: v1
@@ -46,7 +46,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   storageClassName: manual
   hostPath:
-    path: /Users/ligiaferrazfranco/Downloads/techchallenge-main/grafana/dashboards
+    path:  /Pos/techchallenge/grafana/dashboards
     type: Directory
 ---
 apiVersion: v1
@@ -63,7 +63,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   storageClassName: manual
   hostPath:
-    path: /Users/ligiaferrazfranco/Downloads/techchallenge-main/prometheus
+    path: /Pos/techchallenge/prometheus
     type: Directory
 ---
 apiVersion: v1
@@ -80,7 +80,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   storageClassName: manual
   hostPath:
-    path: /Users/ligiaferrazfranco/Downloads/techchallenge-main/rabbitmq/dados
+    path:  /Pos/techchallenge/rabbitmq/dados
     type: Directory
 ---
 apiVersion: v1
@@ -97,5 +97,5 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   storageClassName: manual
   hostPath:
-    path: /Users/ligiaferrazfranco/Downloads/techchallenge-main/sqlserver
+    path:  /Pos/techchallenge/sqlserver
     type: Directory
